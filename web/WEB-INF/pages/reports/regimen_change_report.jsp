@@ -22,7 +22,6 @@
 				<tr>
 					<th id="dateH" class="enhancedtabletighterCell" valign="middle"><strong>Date started</strong></th>
 					<th id="typeH" class="enhancedtabletighterCell" valign="middle"><strong>Client</strong></th>
-					<th id="exireH" class="enhancedtabletighterCell" valign="middle"><strong>Previous Regimen</strong></th>
 					<th id="exireH" class="enhancedtabletighterCell" valign="middle"><strong>Regimen</strong></th>
 					<th id="regH" class="enhancedtabletighterCell" valign="middle"><strong>Reason for change</strong></th>
 				</tr>
@@ -32,7 +31,6 @@
 				<tr>
 					<td><fmt:formatDate value="${encounter.date_started}" pattern="${dateFormatLong}"/></td>
 					<td><a href='<c:out value="/${appName}/${url}"/>'>${encounter.surname}, ${encounter.firstName}</a></td>
-					<td>${encounter.regimen_1R}</td>
 					<td>${encounter.regimen_1R}</td>
 					<td>${encounter.regimen_change_reasonR}</td>
 				</tr>

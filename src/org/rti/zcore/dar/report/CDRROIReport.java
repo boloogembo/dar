@@ -687,7 +687,6 @@ public class CDRROIReport extends Register {
 									totalDispensedMap.put(key.intValue(), n);
 									totalDispensed.setPyridoxine25mg(n);
 									break;
-							
 								default:
 									break;
 								}
@@ -743,8 +742,8 @@ public class CDRROIReport extends Register {
 				totalQuantityRequired = new OIPatient();
 
 				//HashMap<Long, List<StockControl>> stockMap = InventoryDAO.getPatientStockMap(conn, siteId, beginDate, endDate);
-				HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null);
-				HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, null, beginDate);
+				HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null,endDate);
+				HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, null, beginDate,endDate);
 
 				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(org.rti.zcore.Constants.DATE_FORMAT_SHORT);
 		    	sdf.setTimeZone(TimeZone.getDefault());
@@ -1227,7 +1226,6 @@ public class CDRROIReport extends Register {
 						quantityRequiredNewPatients.setPyridoxine25mg(stockNew);
 						totalQuantityRequired.setPyridoxine25mg(totalRequired);
 						break;
-					
 					default:
 						break;
 					}

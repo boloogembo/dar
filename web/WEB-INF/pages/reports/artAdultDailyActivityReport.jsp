@@ -23,7 +23,7 @@
 <template:insert template='/WEB-INF/templates/${appTemplateDir}/template-report-wide.jsp'>
 <template:put name='title' direct='true'>ART Adult Daily Activity Report for ${register.siteName}
 :&nbsp;${beginDate}<c:if test="${!empty endDate}"> - ${endDate}</c:if></template:put>
-<template:put name='header' direct='true'>Combined Daily Activity Report for ${register.siteName}:&nbsp;${beginDate}
+<template:put name='header' direct='true'>ART Adult Daily Activity Report for ${register.siteName}:&nbsp;${beginDate}
 <c:if test="${!empty endDate}"> - ${endDate}</c:if></template:put>
 <template:put name='content' direct='true'>
 <table border="1" cellspacing="0" cellpadding="3" class="reportTablePrint">
@@ -32,8 +32,6 @@
         <td colspan="3">KEMSA</td>
         <th class="sideways" rowspan="2">ARV Regimen Code</th>
         <th colspan="15">ADULT FORMULATIONS</th>
-        <th colspan="20">PAEDIATRIC FORMULATIONS</th>
-        <th colspan="13">DRUGS FOR OIs</th>
     </tr>
     <tr>
     	<td colspan="3">Name of Facility</td>
@@ -54,42 +52,6 @@
 		<th class="sideways">Didanosine (ddI) 400mg EC Tabs</th>
 		<th class="sideways">Didanosine (ddI) 250mg EC Tabs</th>
 		<th class="sideways">Lopinavir/ritonavir (LPV/r) 200/50mg Tabs</th>
-		
-		<th class="sideways">Zidovudine/Lamivudine/Nevirapine (AZT/3TC/NVP) FDC (60/30/50mg) tabs</th>
-		<th class="sideways">Zidovudine/Lamivudine (AZT/3TC) FDC (60/30mg) Tabs</th>
-		<th class="sideways">Abacavir/Lamivudine (ABC/3TC) 60mg/30mg FDC Tabs</th>
-		<th class="sideways">Stavudine/Lamivudine/Nevirapine (d4T/3TC/NVP) FDC (12/60/100mg) Tabs</th>
-		<th class="sideways">Abacavir (ABC) liquid 20mg/ml (Bottles)</th>
-		<th class="sideways">Didanosine (ddI) 25mg Buffered Tabs</th>
-		<th class="sideways">Didanosine (ddI) 125mg EC Tabs</th>
-		<th class="sideways">Didanosine (ddI) 200mg EC Tabs</th>
-		<th class="sideways">Efavirenz (EFV) 50mg Caps</th>
-		<th class="sideways">Efavirenz (EFV) 200mg Tabs</th>
-		<th class="sideways">Lamivudine (3TC) liquid 10mg/ml (Bottles)</th>
-		<th class="sideways">Lopinavir/ritonavir (LPV/r) 100/25mg Tabs</th>
-		<th class="sideways">Lopinavir/ritonavir (LPV/r) liquid 80/20mg/ml (Bottles)</th>
-		<th class="sideways">Nevirapine (NVP) 50mg Tabs</th>
-		<th class="sideways">Nevirapine (NVP) Susp 10mg/ml (Bottles)</th>
-		<th class="sideways">Nevirapine (NVP) Susp 10mg/ml (For PMTCT only) (Bottles)</th>
-		<th class="sideways">Stavudine (d4T) 15mg Caps.</th>
-		<th class="sideways">Stavudine (d4T) 20mg Caps.</th>
-		<th class="sideways">Zidovudine (AZT) 100mg Caps.</th>
-		<th class="sideways">Zidovudine (AZT) liquid 10mg/ml (Bottles)</th>
-		
-		<th class="sideways">Cotrimoxazole 480mg Tabs</th>
-		<th class="sideways">Cotrimoxazole 960mg Tabs</th>
-		<th class="sideways">Cotrimoxazole suspension 240mg/5ml (Bottles)</th>
-		<th class="sideways">Dapsone 100mg Tabs</th>
-		<th class="sideways">Diflucan 200mg Tabs</th>
-		<th class="sideways">Diflucan Suspension 50mg/5mlSuspension (Bottles)</th>
-		<th class="sideways">Diflucan IV Infusion 2mg/ml (Bottles)</th>
-		<th class="sideways">Fluconazole 200mg Tabs</th>
-		<th class="sideways">Fluconazole 50mg Tabs / Caps</th>
-		<th class="sideways">Amphotericin B 50mg IV Injection (Vials)</th>
-		<th class="sideways">Acyclovir 400mg Tabs</th>
-		<th class="sideways">Pyridoxine 50mg Tabs</th>
-		<th class="sideways">Miconazole muco-adhesive 10mg Tabs</th>
-		
     </tr>
     <tr>
         <th colspan="6" align="right">Balance B/F (A)</th>
@@ -109,41 +71,6 @@
         <td align="center">${register.stockReportMap.itemddI_400.balanceBF}</td>
         <td align="center">${register.stockReportMap.itemddI_250.balanceBF}</td>
         <td align="center">${register.stockReportMap.itemLPV_r_200_50.balanceBF}</td>
-        
-        <td align="center">${register.stockReportMap.item218.balanceBF}</td>
-        <td align="center">${register.stockReportMap.itemAZT_3TC_60_30.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item219.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item217.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item21.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item22.balanceBF}</td>
-        <td align="center">${register.stockReportMap.itemddl20.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item9.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item24.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item11.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item26.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item220.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item27.balanceBF}</td>
-        <td align="center">${register.stockReportMap.itemNVP_50.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item29.balanceBF}</td>
-        <td align="center">${register.stockReportMap.itemNVP_10_PMTCT.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item30.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item31.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item33.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item34.balanceBF}</td>
-        
-        <td align="center">${register.stockReportMap.itemPHA0048.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item46.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item45.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item207.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item35.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item36.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item37.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item38.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item40.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item44.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item202.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item210.balanceBF}</td>
-        <td align="center">${register.stockReportMap.item205.balanceBF}</td>
        
 	</tr>
     <tr>
@@ -164,41 +91,7 @@
         <td align="center">${register.stockReportMap.itemddI_400.received}</td>
         <td align="center">${register.stockReportMap.itemddI_250.received}</td>
         <td align="center">${register.stockReportMap.itemLPV_r_200_50.received}</td>
-        
-        <td align="center">${register.stockReportMap.item218.received}</td>
-        <td align="center">${register.stockReportMap.itemAZT_3TC_60_30.received}</td>
-        <td align="center">${register.stockReportMap.item219.received}</td>
-        <td align="center">${register.stockReportMap.item217.received}</td>
-        <td align="center">${register.stockReportMap.item21.received}</td>
-        <td align="center">${register.stockReportMap.item22.received}</td>
-        <td align="center">${register.stockReportMap.itemddl200.received}</td>
-        <td align="center">${register.stockReportMap.item9.received}</td>
-        <td align="center">${register.stockReportMap.item24.received}</td>
-        <td align="center">${register.stockReportMap.item11.received}</td>
-        <td align="center">${register.stockReportMap.item26.received}</td>
-        <td align="center">${register.stockReportMap.item220.received}</td>
-        <td align="center">${register.stockReportMap.item27.received}</td>
-        <td align="center">${register.stockReportMap.itemNVP_50.received}</td>
-        <td align="center">${register.stockReportMap.item29.received}</td>
-        <td align="center">${register.stockReportMap.itemNVP_10_PMTCT.received}</td>
-        <td align="center">${register.stockReportMap.item30.received}</td>
-        <td align="center">${register.stockReportMap.item31.received}</td>
-        <td align="center">${register.stockReportMap.item33.received}</td>
-        <td align="center">${register.stockReportMap.item34.received}</td>
-        
-		 <td align="center">${register.stockReportMap.itemPHA0048.received}</td>
-        <td align="center">${register.stockReportMap.item46.received}</td>
-        <td align="center">${register.stockReportMap.item45.received}</td>
-        <td align="center">${register.stockReportMap.item207.received}</td>
-        <td align="center">${register.stockReportMap.item35.received}</td>
-        <td align="center">${register.stockReportMap.item36.received}</td>
-        <td align="center">${register.stockReportMap.item37.received}</td>
-        <td align="center">${register.stockReportMap.item38.received}</td>
-        <td align="center">${register.stockReportMap.item40.received}</td>
-        <td align="center">${register.stockReportMap.item44.received}</td>
-        <td align="center">${register.stockReportMap.item202.received}</td>
-        <td align="center">${register.stockReportMap.item210.received}</td>
-        <td align="center">${register.stockReportMap.item205.received}</td>
+		
 	</tr>
     <tr>
         <th colspan="6" align="right">Stock on Hand (Balance B/F plus Quantity Received)<br/>(C= A + B)</th>
@@ -218,41 +111,6 @@
         <td align="center">${register.stockReportMap.itemddI_400.onHand}</td>
         <td align="center">${register.stockReportMap.itemddI_250.onHand}</td>
         <td align="center">${register.stockReportMap.itemLPV_r_200_50.onHand}</td>
-        
-        <td align="center">${register.stockReportMap.item218.onHand}</td>
-        <td align="center">${register.stockReportMap.itemAZT_3TC_60_30.onHand}</td>
-        <td align="center">${register.stockReportMap.item219.onHand}</td>
-        <td align="center">${register.stockReportMap.item217.onHand}</td>
-        <td align="center">${register.stockReportMap.item21.onHand}</td>
-        <td align="center">${register.stockReportMap.item22.onHand}</td>
-        <td align="center">${register.stockReportMap.itemddl200.onHand}</td>
-        <td align="center">${register.stockReportMap.item9.onHand}</td>
-        <td align="center">${register.stockReportMap.item24.onHand}</td>
-        <td align="center">${register.stockReportMap.item11.onHand}</td>
-        <td align="center">${register.stockReportMap.item26.onHand}</td>
-        <td align="center">${register.stockReportMap.item220.onHand}</td>
-        <td align="center">${register.stockReportMap.item27.onHand}</td>
-        <td align="center">${register.stockReportMap.itemNVP_50.onHand}</td>
-        <td align="center">${register.stockReportMap.item29.onHand}</td>
-        <td align="center">${register.stockReportMap.itemNVP_10_PMTCT.onHand}</td>
-        <td align="center">${register.stockReportMap.item30.onHand}</td>
-        <td align="center">${register.stockReportMap.item31.onHand}</td>
-        <td align="center">${register.stockReportMap.item33.onHand}</td>
-        <td align="center">${register.stockReportMap.item34.onHand}</td>
-        
-         <td align="center">${register.stockReportMap.itemPHA0048.onHand}</td>
-        <td align="center">${register.stockReportMap.item46.onHand}</td>
-        <td align="center">${register.stockReportMap.item45.onHand}</td>
-        <td align="center">${register.stockReportMap.item207.onHand}</td>
-        <td align="center">${register.stockReportMap.item35.onHand}</td>
-        <td align="center">${register.stockReportMap.item36.onHand}</td>
-        <td align="center">${register.stockReportMap.item37.onHand}</td>
-        <td align="center">${register.stockReportMap.item38.onHand}</td>
-        <td align="center">${register.stockReportMap.item40.onHand}</td>
-        <td align="center">${register.stockReportMap.item44.onHand}</td>
-        <td align="center">${register.stockReportMap.item202.onHand}</td>
-        <td align="center">${register.stockReportMap.item210.onHand}</td>
-        <td align="center">${register.stockReportMap.item205.onHand}</td>
 		
 	</tr>
     <tr>
@@ -262,12 +120,11 @@
         <th title="Age:- C for Child (<=14 Yrs) or A for Adults (>14 yrs)">Child or Adult</th>
         <th title="New Client (N) or Revisit (R)">New or Revisit</th>
         <th title="Dispensing pharmacist (Signature)">Pharmacist</th>
-        <th colspan="49"></th>
+        <th colspan="17"></th>
 	</tr>
 
 <c:set var="smRegisterString" value="unknown"/>
-<logic:iterate id="patient" name="register" property="artRegimenReport.allPatients" indexId="cnt">
-
+<logic:iterate id="patient" name="register" property="artRegimenReport.adults" indexId="cnt">
 	<tr>
     	<td align="center"><fmt:formatDate type="date" pattern="${dateFormatLong}" value="${patient.dateVisit}"/></td>
     	<td align="center" >${patient.clientId}</td>
@@ -295,42 +152,6 @@
         <td align="center">${patient.totalStockDispensed.itemddI_400}</td>
         <td align="center">${patient.totalStockDispensed.itemddI_250}</td>
         <td align="center">${patient.totalStockDispensed.itemLPV_r_200_50}</td>
-        
-        <td align="center">${patient.totalStockDispensed.item218}</td>
-        <td align="center">${patient.totalStockDispensed.itemAZT_3TC_60_30}</td>
-        <td align="center">${patient.totalStockDispensed.item219}</td>
-        <td align="center">${patient.totalStockDispensed.item217}</td>
-        <td align="center">${patient.totalStockDispensed.item21}</td>
-        <td align="center">${patient.totalStockDispensed.item22}</td>
-        <td align="center">${patient.totalStockDispensed.itemddl200}</td>
-        <td align="center">${patient.totalStockDispensed.item9}</td>
-        <td align="center">${patient.totalStockDispensed.item24}</td>
-        <td align="center">${patient.totalStockDispensed.item11}</td>
-        <td align="center">${patient.totalStockDispensed.item26}</td>
-        <td align="center">${patient.totalStockDispensed.item220}</td>
-        <td align="center">${patient.totalStockDispensed.item27}</td>
-        <td align="center">${patient.totalStockDispensed.itemNVP_50}</td>
-        <td align="center">${patient.totalStockDispensed.item29}</td>
-        <td align="center">${patient.totalStockDispensed.itemNVP_10_PMTCT}</td>
-        <td align="center">${patient.totalStockDispensed.item30}</td>
-        <td align="center">${patient.totalStockDispensed.item31}</td>
-        <td align="center">${patient.totalStockDispensed.item33}</td>
-        <td align="center">${patient.totalStockDispensed.item34}</td>
-        
-        <td align="center">${patient.totalStockDispensed.itemPHA0048}</td>
-        <td align="center">${patient.totalStockDispensed.item46}</td>
-        <td align="center">${patient.totalStockDispensed.item45}</td>
-        <td align="center">${patient.totalStockDispensed.item207}</td>
-        <td align="center">${patient.totalStockDispensed.item35}</td>
-        <td align="center">${patient.totalStockDispensed.item36}</td>
-        <td align="center">${patient.totalStockDispensed.item37}</td>
-        <td align="center">${patient.totalStockDispensed.item38}</td>
-        <td align="center">${patient.totalStockDispensed.item40}</td>
-        <td align="center">${patient.totalStockDispensed.item44}</td>
-        <td align="center">${patient.totalStockDispensed.item202}</td>
-        <td align="center">${patient.totalStockDispensed.item210}</td>
-        <td align="center">${patient.totalStockDispensed.item205}</td>
-        
 	</tr>
 </logic:iterate>
 	    <tr>
@@ -351,44 +172,6 @@
         <td align="center">${register.stockReportMap.itemddI_400.totalDispensed}</td>
         <td align="center">${register.stockReportMap.itemddI_250.totalDispensed}</td>
         <td align="center">${register.stockReportMap.itemLPV_r_200_50.totalDispensed}</td>
-        
-        <td align="center">${register.stockReportMap.item218.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.itemAZT_3TC_60_30.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item219.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item217.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item21.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item22.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.itemddl200.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item9.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item24.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item11.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item26.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item220.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item27.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.itemNVP_50.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item29.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.itemNVP_10_PMTCT.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item30.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item31.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item33.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item34.totalDispensed}</td>
-        
-        
-		<td align="center">${register.stockReportMap.itemPHA0048.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item46.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item45.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item207.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item35.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item36.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item37.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item38.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item40.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item44.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item202.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item210.totalDispensed}</td>
-        <td align="center">${register.stockReportMap.item205.totalDispensed}</td>
-        
-        
 	</tr>
 	    <tr>
 	        <th colspan="6" align="right">Losses (E)</th>
@@ -408,42 +191,6 @@
         <td align="center">${register.stockReportMap.itemddI_400.losses}</td>
         <td align="center">${register.stockReportMap.itemddI_250.losses}</td>
         <td align="center">${register.stockReportMap.itemLPV_r_200_50.losses}</td>
-        
-        <td align="center">${register.stockReportMap.item218.losses}</td>
-        <td align="center">${register.stockReportMap.itemAZT_3TC_60_30.losses}</td>
-        <td align="center">${register.stockReportMap.item219.losses}</td>
-        <td align="center">${register.stockReportMap.item217.losses}</td>
-        <td align="center">${register.stockReportMap.item21.losses}</td>
-        <td align="center">${register.stockReportMap.item22.losses}</td>
-        <td align="center">${register.stockReportMap.itemddl200.losses}</td>
-        <td align="center">${register.stockReportMap.item9.losses}</td>
-        <td align="center">${register.stockReportMap.item24.losses}</td>
-        <td align="center">${register.stockReportMap.item11.losses}</td>
-        <td align="center">${register.stockReportMap.item26.losses}</td>
-        <td align="center">${register.stockReportMap.item220.losses}</td>
-        <td align="center">${register.stockReportMap.item27.losses}</td>
-        <td align="center">${register.stockReportMap.itemNVP_50.losses}</td>
-        <td align="center">${register.stockReportMap.item29.losses}</td>
-        <td align="center">${register.stockReportMap.itemNVP_10_PMTCT.losses}</td>
-        <td align="center">${register.stockReportMap.item30.losses}</td>
-        <td align="center">${register.stockReportMap.item31.losses}</td>
-        <td align="center">${register.stockReportMap.item33.losses}</td>
-        <td align="center">${register.stockReportMap.item34.losses}</td>
-        
-       <td align="center">${register.stockReportMap.itemPHA0048.losses}</td>
-        <td align="center">${register.stockReportMap.item46.losses}</td>
-        <td align="center">${register.stockReportMap.item45.losses}</td>
-        <td align="center">${register.stockReportMap.item207.losses}</td>
-        <td align="center">${register.stockReportMap.item35.losses}</td>
-        <td align="center">${register.stockReportMap.item36.losses}</td>
-        <td align="center">${register.stockReportMap.item37.losses}</td>
-        <td align="center">${register.stockReportMap.item38.losses}</td>
-        <td align="center">${register.stockReportMap.item40.losses}</td>
-        <td align="center">${register.stockReportMap.item44.losses}</td>
-        <td align="center">${register.stockReportMap.item202.losses}</td>
-        <td align="center">${register.stockReportMap.item210.losses}</td>
-        <td align="center">${register.stockReportMap.item205.losses}</td>
-		
 		</tr>
 	    <tr>
 	        <th colspan="6" align="right">Balance CF (G)</th>
@@ -463,43 +210,6 @@
         <td align="center">${register.stockReportMap.itemddI_400.balanceCF}</td>
         <td align="center">${register.stockReportMap.itemddI_250.balanceCF}</td>
         <td align="center">${register.stockReportMap.itemLPV_r_200_50.balanceCF}</td>
-        
-        <td align="center">${register.stockReportMap.item218.balanceCF}</td>
-        <td align="center">${register.stockReportMap.itemAZT_3TC_60_30.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item219.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item217.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item21.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item22.balanceCF}</td>
-        <td align="center">${register.stockReportMap.itemddl200.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item9.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item24.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item11.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item26.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item220.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item27.balanceCF}</td>
-        <td align="center">${register.stockReportMap.itemNVP_50.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item29.balanceCF}</td>
-        <td align="center">${register.stockReportMap.itemNVP_10_PMTCT.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item30.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item31.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item33.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item34.balanceCF}</td>
-        
-        <td align="center">${register.stockReportMap.itemPHA0048.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item46.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item45.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item207.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item35.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item36.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item37.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item38.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item40.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item44.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item202.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item210.balanceCF}</td>
-        <td align="center">${register.stockReportMap.item205.balanceCF}</td>
-        
-        
 	</tr>
 </table>
 

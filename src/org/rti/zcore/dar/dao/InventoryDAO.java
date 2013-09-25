@@ -1056,7 +1056,7 @@ SQLException, ObjectNotFoundException {
  * @throws SQLException
  * @throws ObjectNotFoundException
  */
-public static HashMap<Long,StockReport> getBalanceMap(Connection conn, Integer siteId, Date endDate) throws ClassNotFoundException, IOException, ServletException,
+public static HashMap<Long,StockReport> getBalanceMap(Connection conn, Integer siteId,Date beginDate, Date endDate) throws ClassNotFoundException, IOException, ServletException,
 SQLException, ObjectNotFoundException {
 	Integer stockControlAdditionsTotal = 0;
 	Integer stockControlDeletionsTotal = 0;
@@ -1228,21 +1228,11 @@ SQLException, ObjectNotFoundException {
 	}
 	
 	log.debug("  the encounter site id "+encounterSiteIdPart);
-	
-	rs.close();
-	
-	//inserting indexes for data normalization.
-		
- 	  /* ps = conn.prepareStatement("CREATE INDEX MeshEIndex ON encounter (id,patient_id)");
-	   ps.executeUpdate();
-	    
-	   ps = conn.prepareStatement("CREATE INDEX MeshPIIndex ON patient_item (encounter_id)");
-	   ps.executeUpdate();
-	  
-       ps = conn.prepareStatement("CREATE INDEX MeshPTIndex ON patient (id)");
-	
-	   ps.executeUpdate(); */
-	
+	//do not enable this
+	//sql="CREATE INDEX MYpatient_item ON patient_item(item_id)";
+	//ps = conn.prepareStatement(sql);
+	//ps.executeUpdate();
+	log.debug("  the index was created ");
 	sql = "SELECT item_id, SUM(patient_item.dispensed) AS dispensed " +
 	"FROM patient_item, encounter, patient " +
 	"WHERE encounter.id = patient_item.encounter_id " +
@@ -1276,22 +1266,25 @@ SQLException, ObjectNotFoundException {
 	
 	
 	try {
-		log.debug("  we are bout to Rs Ps  "+ps.getFetchSize());
+		//log.debug("  we are bout to Rs Ps  "+ps.getFetchSize());
+		
+		log.debug("  we are bout to Rs Ps  ");
 		//rs = ps.executeQuery();
 	
 	
 	
 	
 	
-	
 	 
-	//rs = ps.executeQuery();
+	rs = ps.executeQuery();
 
 	
 	log.debug("  rs querry was created ");
 	while (rs.next()) {
+		log.debug("  rs querry excecuted and returning resulting result set ");
 		itemId = rs.getLong("item_id");
 		dispensed = rs.getInt("dispensed");
+		log.debug("  item id from query:  " + itemId  + "quantity dispensed :  " + dispensed );
 		if (map.get(itemId) == null) {
 			stockReport = new StockReport();
 		} else {
@@ -1309,22 +1302,6 @@ SQLException, ObjectNotFoundException {
 		e.printStackTrace();
 		
 	}
-	
-	
-	// dropping indexes we inserted
-	 
-	/*   ps = conn.prepareStatement("ALTER TABLE encounter DROP  INDEX MeshEIndex");
-	   ps.executeUpdate();
-	   
-	   ps = conn.prepareStatement("ALTER TABLE  patient_item DROP  INDEX MeshPIIndex");
-	   ps.executeUpdate();
-	  
-	   ps = conn.prepareStatement("ALTER TABLE  patient DROP  INDEX MeshPTIndex");
-       ps.executeUpdate(); */
-       
-       
-	
-      // log.debug(" we have dropped the indexes ");
 	
 
 	

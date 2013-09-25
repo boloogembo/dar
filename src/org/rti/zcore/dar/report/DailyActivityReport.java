@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -56,7 +57,7 @@ public class DailyActivityReport extends Register {
 	 * Commons Logging instance.
 	 */
 	public static Log log = LogFactory.getFactory().getInstance(DailyActivityReport.class);
-
+    private static ArrayList ids = new ArrayList(); //ADDED BY SERVTECH sYSTEMS
 	private String reportMonth;
 	private String reportYear;
 	private String type;
@@ -93,17 +94,24 @@ public class DailyActivityReport extends Register {
 		Connection conn = null;
 		try {
 			conn = DatabaseUtils.getZEPRSConnection(org.rti.zcore.Constants.DATABASE_ADMIN_USERNAME);
-
+			System.out.println(conn.getMetaData().getUserName());
+			System.out.println(conn.getMetaData().getURL());
+			System.out.println(org.rti.zcore.Constants.DATABASE_ADMIN_USERNAME);
 			// Process report definitions
 			String reportName = this.getType();
+			System.out.println("Gotten the report type "+reportName);
 			itemMap = getItemMapForReport(conn, reportName);
+			System.out.println("Executing ItemMap "+beginDate+" >>>> "+endDate+" connection>> "+conn+" Itrmmap>> "+itemMap+" site id>> "+siteId);
 			stockReportMap = InventoryUtils.populateStockReportMaps(conn, beginDate, endDate, siteId, itemMap);
+			System.out.println("Executed Stock Report Map");
 			artRegimenReport = assembleArtRegimenReport(conn, beginDate, endDate, siteId, stockReportMap, itemMap);
-			
+			System.out.println("Executing Stock Art Regimen Report");
 			// Sort out the view spec
 			ArrayList<StockReport> reportDisplayList = new ArrayList<StockReport>();
 			String filename = org.rti.zcore.Constants.getPathToCatalinaHome() + "databases" + File.separator  +  "cdrr.txt";
-		    for(String line : new TextFile(filename)) {
+			System.out.println("Executed initiolization of filename "+filename);
+			
+			for(String line : new TextFile(filename)) {
 		    	//System.out.println(line);
 		    	String[] lineArray = line.split("\\|");
 		    	String displayCategory = lineArray[0];
@@ -116,6 +124,8 @@ public class DailyActivityReport extends Register {
 			    	}
 		    	}
 		    }
+			System.out.println("Finished for iter "+filename);
+			
 		    displayStockReportList.addAll(reportDisplayList);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,13 +185,6 @@ public class DailyActivityReport extends Register {
 			    		String code = lineArray[1];
 			    		codeList.add(code);
 			    	}
-		    		
-		    		/*
-		    		 * Add an array to hold OIS items */
-			    	else if (lineArray[0].equals("stock_oi")) {
-			    		String code = lineArray[1];
-			    		codeList.add(code);
-			    	}
 		    	}
 			}
 			itemMap = InventoryUtils.populateItemMap(conn, codeList);
@@ -196,33 +199,10 @@ public class DailyActivityReport extends Register {
 		    		if (lineArray[0].equals("stock_adultFDC")) {
 			    		String code = lineArray[1];
 			    		codeList.add(code);
-			    		
 			    	} else if (lineArray[0].equals("stock_adultSD")) {
 			    		String code = lineArray[1];
 			    		codeList.add(code);
 			    	}
-		    		/*
-		    		 * addd paeds first line 
-		    		 * */
-			    	else if (lineArray[0].equals("stock_paed1")) {
-			    		String code = lineArray[1];
-			    		codeList.add(code);
-			    	} 
-		    		/*
-		    		 * add paeds second line
-		    		 * */
-		    		
-			    	else if(lineArray[0].equals("paed2")) {
-			    		String code = lineArray[1];
-			    		codeList.add(code);
-			    	}
-		    		
-		    		/*add ois*/
-		    		
-			    	else if (lineArray[0].equals("stock_oi")) {
-						String code = lineArray[1];
-						codeList.add(code);
-					} 
 		    	}
 			} 
 			itemMap = InventoryUtils.populateItemMap(conn, codeList);
@@ -290,7 +270,7 @@ public class DailyActivityReport extends Register {
 	 */
 	public static ARTReport assembleArtRegimenReport(Connection conn, Date beginDate,
 			Date endDate, int siteId, LinkedHashMap<String,StockReport> stockReportMap, LinkedHashMap<Long,Item> itemMap) throws ServletException, ObjectNotFoundException,
-			IOException {
+			IOException, SQLException {
 		
 		Form encounterForm = ((Form) DynaSiteObjects.getForms().get(new Long(132)));
 		String className = "org.rti.zcore.dar.gen." + StringManipulation.fixClassname(encounterForm.getName());
@@ -311,183 +291,191 @@ public class DailyActivityReport extends Register {
 				 
 		ResultSet rs = null;
 		try {
-			rs = InventoryUtils.getPatientDispensaryEncounters(conn, siteId, beginDate, endDate);
+			System.out.println("headed to getPatientDispensaryEncounters");
+		ids=	getPatientEncounterIdsForPeriod(conn, siteId, beginDate, endDate);
+			//'rs = InventoryUtils.getPatientDispensaryEncounters(conn, siteId, beginDate, endDate);
+			System.out.println("out of getPatientDispensaryEncounters");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		try {
-			while (rs.next()) {
-				try {
-					Long encounterId = rs.getLong("id");
-					Long patientId = rs.getLong("patient_id");
-					String districtPatientId = rs.getString("district_patient_id");
-					String firstName = rs.getString("first_name");
-					String surname = rs.getString("surname");
-					Date dateVisit = rs.getDate("date_visit");
-					//Integer age = rs.getInt("age_at_first_visit");
-					Integer ageCategory = rs.getInt("age_category");
-					int currentSiteId = rs.getInt("site_id");
-					String createdBy = rs.getString("created_by");
-					Timestamp created = rs.getTimestamp("created");
-					int sex = rs.getInt("sex");
+		
+		
+		int i=0;
+		while (i<ids.size()) {
+			
+			rs = getTheRestOfDetails(conn, siteId, beginDate, endDate,ids.get(i));
+			rs.next();
+			try {
+				Long encounterId = (Long) ids.get(i);
+				Long patientId = rs.getLong("patient_id");
+				String districtPatientId = rs.getString("district_patient_id");
+				String firstName = rs.getString("first_name");
+				String surname = rs.getString("surname");
+				Date dateVisit = rs.getDate("date_visit");
+				//Integer age = rs.getInt("age_at_first_visit");
+				Integer ageCategory = rs.getInt("age_category");
+				int currentSiteId = rs.getInt("site_id");
+				String createdBy = rs.getString("created_by");
+				Timestamp created = rs.getTimestamp("created");
+				int sex = rs.getInt("sex");
 
-					ARTPatient patient = new ARTPatient();
+				ARTPatient patient = new ARTPatient();
 
-					patient.setEncounterId(encounterId);
-					patient.setPatientId(patientId);
-					patient.setClientId(districtPatientId);
-					patient.setFirstName(firstName);
-					patient.setSurname(surname);
-					patient.setDateVisit(dateVisit);
-					patient.setSiteId(currentSiteId);
-					patient.setPharmacist(createdBy);
-					patient.setCreated(created);
-					patient.setSex(sex);
+				patient.setEncounterId(encounterId);
+				patient.setPatientId(patientId);
+				patient.setClientId(districtPatientId);
+				patient.setFirstName(firstName);
+				patient.setSurname(surname);
+				patient.setDateVisit(dateVisit);
+				patient.setSiteId(currentSiteId);
+				patient.setPharmacist(createdBy);
+				patient.setCreated(created);
+				patient.setSex(sex);
 
-					switch (ageCategory) {
-					case 3283:
-						patient.setChildOrAdult("A");
-						break;
-					case 3284:
-						patient.setChildOrAdult("C");
-						break;
-					default:
-						patient.setChildOrAdult("A");
-						break;
-					}
-
-					EncounterData encounter = (EncounterData) PatientItemDAO.getEncounterRawValues(conn, encounterForm, "132", encounterId, clazz);
-					Map encMap = encounter.getEncounterMap();
-					Set encSet = encMap.entrySet();
-					boolean includePatientInReport = false;
-
-					HashMap<String, Integer> patientDispensed = new HashMap<String, Integer>();
-
-					for (Iterator iterator = encSet.iterator(); iterator.hasNext();) {
-						Map.Entry entry = (Map.Entry) iterator.next();
-						Long key = (Long) entry.getKey();
-						Integer value = (Integer) entry.getValue();
-						// Someone might have forgotten to enter the value
-						if (value == null) {
-							value = 0;
-						}
-						if (key != null) {
-							int n = 0;
-							Item item = itemMap.get(key);
-							//log.debug("item " + key + " dispensed to " + patient.getSurname());
-							if (item != null) {
-								String code = item.getCode().trim().replace(" ", "_");
-								patientDispensed.put("item" + code, value);
-								//log.debug("item " + code + " amount: " + value + " dispensed to " + patient.getSurname());
-								StockReport stockReport = stockReportMap.get("item" + code);
-								Integer itemDispensed = stockReport.getTotalDispensed();
-								if (itemDispensed != null) {
-									n = itemDispensed + value;
-								} else {
-									n = value;
-								}
-								//totalDispensed.setStavudine_LamivudineFDCTabs_30_150mg(n);
-								//patientDispensed.put("item" + code, n);
-								stockReport.setTotalDispensed(n);
-								includePatientInReport = true;
-								//log.debug("item " + code + " dispensed to " + patient.getSurname());
-							}
-						}
-					}
-
-					patient.setTotalStockDispensed(patientDispensed);
-
-					if (patientArvMap.get(patientId) == null) {
-						//if (includePatientInReport == true) {
-							try {
-								ResultSet artRs = ZEPRSUtils.getPatientArtRegimen(conn, patientId, beginDate, endDate);
-								//int totalAdultsDispensed = 0;
-								while (artRs.next()) {
-									String code = artRs.getString("code");
-									patient.setArvRegimenCode(code);
-									//if (patientArvMap.get(patientId) == null) {
-									patientArvMap.put(patientId, code);
-									if (patient.getChildOrAdult().equals("A")) {
-										int n = artRegimenReport.getTotalAdultsDispensed();
-										n++;
-										artRegimenReport.setTotalAdultsDispensed(n);
-									} else if (patient.getChildOrAdult().equals("C")) {
-										int n = artRegimenReport.getTotalChildrenDispensed();
-										n++;
-										artRegimenReport.setTotalChildrenDispensed(n);
-									}
-									// check if this is the first visit - there might be multiples ones for this encounter
-									Date firstVisit = EncountersDAO.getFirstVisit(conn, patientId);
-									if (firstVisit.getTime() == dateVisit.getTime()) {
-										patient.setRevisit(false);
-										switch (sex) {
-										case 1:
-											int n = artRegimenReport.getTotalFemalesNew();
-											n++;
-											artRegimenReport.setTotalFemalesNew(n);
-										case 2:
-											n = artRegimenReport.getTotalMalesNew();
-											n++;
-											artRegimenReport.setTotalMalesNew(n);
-										}
-										if (patient.getChildOrAdult().equals("A")) {
-											int n = artRegimenReport.getTotalAdultsNew();
-											n++;
-											artRegimenReport.setTotalAdultsNew(n);
-										} else if (patient.getChildOrAdult().equals("C")) {
-											int n = artRegimenReport.getTotalChildrenNew();
-											n++;
-											artRegimenReport.setTotalChildrenNew(n);
-										}
-									} else {
-										patient.setRevisit(true);
-										switch (sex) {
-										case 1:
-											int n = artRegimenReport.getTotalFemalesRevisit();
-											n++;
-											artRegimenReport.setTotalFemalesRevisit(n);
-										case 2:
-											n = artRegimenReport.getTotalMalesRevisit();
-											n++;
-											artRegimenReport.setTotalMalesRevisit(n);
-										}
-										if (patient.getChildOrAdult().equals("A")) {
-											int n = artRegimenReport.getTotalAdultsRevisit();
-											n++;
-											artRegimenReport.setTotalAdultsRevisit(n);
-										} else if (patient.getChildOrAdult().equals("C")) {
-											int n = artRegimenReport.getTotalChildrenRevisit();
-											n++;
-											artRegimenReport.setTotalChildrenRevisit(n);
-										}
-									}
-									String key = "regimen" + code.trim().replace(" ", "_");
-									int amount = 0;
-									if (regimenReportMap.get(key) != null) {
-										amount = regimenReportMap.get(key);
-									}
-									amount++;
-									regimenReportMap.put(key, amount);
-								}
-								artRs.close();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-					}
-					patient.setEncounter(encounter);
-					if (includePatientInReport == true) {
-						if (patient.getChildOrAdult().equals("A")) {
-							adults.add(patient);
-						} else if (patient.getChildOrAdult().equals("C")) {
-							children.add(patient);
-						}
-					}
-				} catch (SQLException e) {
-					log.error(e);
+				switch (ageCategory) {
+				case 3283:
+					patient.setChildOrAdult("A");
+					break;
+				case 3284:
+					patient.setChildOrAdult("C");
+					break;
+				default:
+					patient.setChildOrAdult("A");
+					break;
 				}
+				System.out.println("out of PatientItemDAO.getEncounterRawValues");
+				EncounterData encounter = (EncounterData) PatientItemDAO.getEncounterRawValues(conn, encounterForm, "132", encounterId, clazz);
+				System.out.println("out of PatientItemDAO.getEncounterRawValues");
+				Map encMap = encounter.getEncounterMap();
+				Set encSet = encMap.entrySet();
+				boolean includePatientInReport = false;
+
+				HashMap<String, Integer> patientDispensed = new HashMap<String, Integer>();
+
+				for (Iterator iterator = encSet.iterator(); iterator.hasNext();) {
+					Map.Entry entry = (Map.Entry) iterator.next();
+					Long key = (Long) entry.getKey();
+					Integer value = (Integer) entry.getValue();
+					// Someone might have forgotten to enter the value
+					if (value == null) {
+						value = 0;
+					}
+					if (key != null) {
+						int n = 0;
+						Item item = itemMap.get(key);
+						//log.debug("item " + key + " dispensed to " + patient.getSurname());
+						if (item != null) {
+							String code = item.getCode().trim().replace(" ", "_");
+							patientDispensed.put("item" + code, value);
+							//log.debug("item " + code + " amount: " + value + " dispensed to " + patient.getSurname());
+							StockReport stockReport = stockReportMap.get("item" + code);
+							Integer itemDispensed = stockReport.getTotalDispensed();
+							if (itemDispensed != null) {
+								n = itemDispensed + value;
+							} else {
+								n = value;
+							}
+							//totalDispensed.setStavudine_LamivudineFDCTabs_30_150mg(n);
+							//patientDispensed.put("item" + code, n);
+							//stockReport.setTotalDispensed(n);
+							includePatientInReport = true;
+							//log.debug("item " + code + " dispensed to " + patient.getSurname());
+						}
+					}
+				}
+
+				patient.setTotalStockDispensed(patientDispensed);
+
+				if (patientArvMap.get(patientId) == null) {
+					//if (includePatientInReport == true) {
+						try {System.out.println("out of ZEPRSUtils.getPatientArtRegimen");
+							ResultSet artRs = ZEPRSUtils.getPatientArtRegimen(conn, patientId, beginDate, endDate);
+							System.out.println("out of ZEPRSUtils.getPatientArtRegimen");
+							//int totalAdultsDispensed = 0;
+							while (artRs.next()) {
+								String code = artRs.getString("code");
+								patient.setArvRegimenCode(code);
+								//if (patientArvMap.get(patientId) == null) {
+								patientArvMap.put(patientId, code);
+								if (patient.getChildOrAdult().equals("A")) {
+									int n = artRegimenReport.getTotalAdultsDispensed();
+									n++;
+									artRegimenReport.setTotalAdultsDispensed(n);
+								} else if (patient.getChildOrAdult().equals("C")) {
+									int n = artRegimenReport.getTotalChildrenDispensed();
+									n++;
+									artRegimenReport.setTotalChildrenDispensed(n);
+								}
+								// check if this is the first visit - there might be multiples ones for this encounter
+								Date firstVisit = EncountersDAO.getFirstVisit(conn, patientId);
+								if (firstVisit.getTime() == dateVisit.getTime()) {
+									patient.setRevisit(false);
+									switch (sex) {
+									case 1:
+										int n = artRegimenReport.getTotalFemalesNew();
+										n++;
+										artRegimenReport.setTotalFemalesNew(n);
+									case 2:
+										n = artRegimenReport.getTotalMalesNew();
+										n++;
+										artRegimenReport.setTotalMalesNew(n);
+									}
+									if (patient.getChildOrAdult().equals("A")) {
+										int n = artRegimenReport.getTotalAdultsNew();
+										n++;
+										artRegimenReport.setTotalAdultsNew(n);
+									} else if (patient.getChildOrAdult().equals("C")) {
+										int n = artRegimenReport.getTotalChildrenNew();
+										n++;
+										artRegimenReport.setTotalChildrenNew(n);
+									}
+								} else {
+									patient.setRevisit(true);
+									switch (sex) {
+									case 1:
+										int n = artRegimenReport.getTotalFemalesRevisit();
+										n++;
+										artRegimenReport.setTotalFemalesRevisit(n);
+									case 2:
+										n = artRegimenReport.getTotalMalesRevisit();
+										n++;
+										artRegimenReport.setTotalMalesRevisit(n);
+									}
+									if (patient.getChildOrAdult().equals("A")) {
+										int n = artRegimenReport.getTotalAdultsRevisit();
+										n++;
+										artRegimenReport.setTotalAdultsRevisit(n);
+									} else if (patient.getChildOrAdult().equals("C")) {
+										int n = artRegimenReport.getTotalChildrenRevisit();
+										n++;
+										artRegimenReport.setTotalChildrenRevisit(n);
+									}
+								}
+								String key = "regimen" + code.trim().replace(" ", "_");
+								int amount = 0;
+								if (regimenReportMap.get(key) != null) {
+									amount = regimenReportMap.get(key);
+								}
+								amount++;
+								regimenReportMap.put(key, amount);
+							}
+							artRs.close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+				}
+				patient.setEncounter(encounter);
+				if (includePatientInReport == true) {
+					if (patient.getChildOrAdult().equals("A")) {
+						adults.add(patient);
+					} else if (patient.getChildOrAdult().equals("C")) {
+						children.add(patient);
+					}
+				}
+			} catch (SQLException e) {
+				log.error(e);
 			}
-		} catch (SQLException e) {
-			log.error(e);
+			i++;
 		}
 		
 		artRegimenReport.setRegimenReportMap(regimenReportMap);
@@ -495,6 +483,7 @@ public class DailyActivityReport extends Register {
 		artRegimenReport.setChildren(children);
 		return artRegimenReport;
 	}
+
 
 	/**
 	 * @return Returns the reportMonth.
@@ -667,6 +656,64 @@ public class DailyActivityReport extends Register {
 	public void setStockReportMap(LinkedHashMap<String, StockReport> stockReportMap) {
 		this.stockReportMap = stockReportMap;
 	}
+//SERVETECH...........................................................
+	
+public static ArrayList getPatientEncounterIdsForPeriod(Connection conn, int siteID, Date beginDate, Date endDate) throws ServletException {
+	    System.out.println("getPatientDispensaryEncounters IDS");
+	    ids.clear();
+		ResultSet rs = null;
+ArrayList ids = new ArrayList();
+		String dateRange = "AND date_visit >= '"+beginDate+"' AND date_visit <=  '"+endDate+"' ";
+		if (endDate == null) {
+			dateRange = " ";
+		}
 
+		try {
+				String sql = "SELECT encounter.id AS id FROM encounter, patient " +
+				"  WHERE encounter.patient_id = patient.id " +
+				" AND form_id = 132" +
+				dateRange +
+				" AND encounter.site_id =  " +siteID+" ";
+				System.out.println(sql);
+				PreparedStatement ps = conn.prepareStatement(sql);
+			
+				rs = ps.executeQuery();
+				while (rs.next()){
+					ids.add(rs.getObject("id"));
+				}
+			
+		} catch (Exception ex) {
+			log.error(ex);
+		}
+
+	return ids;
+}
+public static ResultSet getTheRestOfDetails(Connection conn, int siteID, Date beginDate, Date endDate,Object id) throws ServletException {
+    System.out.println("Det for ID  "+id);
+	ResultSet rs = null;
+
+	String dateRange = "AND date_visit >= '"+beginDate+"' AND date_visit <=  '"+endDate+"' ";
+	if (endDate == null) {
+		dateRange = "";
+	}
+
+	try {
+			String sql =  "SELECT date_visit, patient_id, district_patient_id, sex, " +
+					"first_name, surname, encounter.site_id, age_at_first_visit, age_category, encounter.created_by AS created_by, encounter.created " +
+					"FROM encounter, patient " +
+					"WHERE encounter.id=" +id+" "+
+					" AND form_id = 132 " +
+					dateRange ;
+			PreparedStatement ps = conn.prepareStatement(sql);
+		
+			rs = ps.executeQuery();
+		
+	} catch (Exception ex) {
+		log.error(ex);
+	}
+
+	return rs;
+}
+//End SERVTECH>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 	
 }

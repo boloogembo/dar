@@ -13,6 +13,7 @@ package org.rti.zcore.dar.utils;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,14 +26,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Set;
 
 import javax.servlet.ServletException;
+
+import junit.runner.Version;
 
 import org.apache.commons.dbutils.QueryLoader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rti.zcore.Constants;
+import org.rti.zcore.dao.EncounterValueArchiveDAO;
 import org.rti.zcore.dar.dao.InventoryDAO;
 import org.rti.zcore.dar.gen.Item;
 import org.rti.zcore.dar.gen.Regimen;
@@ -47,6 +53,20 @@ public class InventoryUtils {
 	/**
 	 * Commons Logging instance.
 	 */
+	static Integer balanceBF=0;
+	static Integer received = 0;
+	static Integer loss = 0;
+	static Integer dispensed = 0;
+	static Integer posAd = 0;
+	static Integer negAd = 0;
+	static Integer balanceCF=0;
+	Integer days_out_of_stock=0;
+	static Integer quantity_for_resupply=0;
+	Integer quantity_for_new_patients=0;
+	Integer total_req_restock=0;
+	static Integer quantity_expired=0;
+	static Date expiry_date;
+	static  Integer outDays=0;
 	public static Log log = LogFactory.getFactory().getInstance(InventoryUtils.class);
 
 	/**
@@ -93,131 +113,99 @@ public class InventoryUtils {
 	 * @throws SQLException
 	 * @throws ObjectNotFoundException
 	 */
-	public static LinkedHashMap<String, StockReport> populateStockReportMaps(Connection conn, Date beginDate,
-			Date endDate, int siteId, LinkedHashMap<Long,Item> itemMap) throws ClassNotFoundException,
-			IOException, ServletException, SQLException,
-			ObjectNotFoundException {
-		String sql;
-		HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null);
-		HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, siteId, beginDate);
-		LinkedHashMap<String,StockReport> stockReportMap = new LinkedHashMap<String,StockReport>();
-		// Get the stock onHand for each item
-		try {
-			Integer currentBalance = null;
-			/*List<Item> items = null;
-			Map queries = QueryLoader.instance().load("/" + Constants.SQL_GENERATED_PROPERTIES);
-			sql = (String) queries.get("SQL_RETRIEVE_ALL_ADMIN131") + " ORDER BY item.id";
-			ArrayList values = new ArrayList();
-			items = DatabaseUtils.getList(conn, Item.class, sql, values);*/
+	//Method Changed By servetech Systems.........from Version 1.2e(Meshack) to 1.2f(Bolo)  
+	public static LinkedHashMap<String, StockReport> populateStockReportMaps(
+			Connection conn,
+			Date beginDate,
+			Date endDate, 
+			int siteId,
+			LinkedHashMap<Long,Item> itemMap) 
 			
-			Set<Entry<Long,Item>> itemSet =  itemMap.entrySet();
-			for (Entry<Long, Item> entry : itemSet) {
-			//for (DropdownItem dropdownItem : list) {
-				//Long itemId = Long.valueOf(dropdownItem.getDropdownId());
-				//Map.Entry entry = (Map.Entry) iterator.next();
-    			Long itemId = entry.getKey();
-    			Item item = entry.getValue();
-				//Long itemId = item.getId();
-				String code = item.getCode().trim().replace(" ", "_");
-				// TODO: Loopng through stockChanges for the stockReceived and stockLoss could be refactored to a method similar to InventoryDAO.getBalanceMap, 
-				// where the sum of the values of type_of_change = 3263 could be queried.
-				List<StockControl> stockChanges = (List<StockControl>) InventoryDAO.getStockChanges(conn, itemId, siteId, beginDate, endDate);
-				
-				Integer stockReceived = 0;
-				Integer stockLoss = 0;
-				Integer stockControlIssuedTotal = 0;
-				Integer posAdjustments = 0;
-				Integer negAdjustments = 0;
-				//Integer totalLosses = 0;
-				if (stockChanges.size() >0) {
-					for (Iterator iterator = stockChanges.iterator(); iterator.hasNext();) {
-						StockControl stock = (StockControl) iterator.next();
-						Integer changeType = stock.getType_of_change();
-						Integer quantity = stock.getChange_value();
-						if (quantity != null) {
-							switch (changeType.intValue()) {
-							case 3263:	// Received
-								stockReceived = stockReceived + quantity;
-								break;
-							case 3265:	// Losses
-								stockLoss = stockLoss + quantity;
-								break;
-							case 3264:	// issued
-								stockControlIssuedTotal = stockControlIssuedTotal + quantity;
-								break;
-							case 3266:	// Pos. Adjust.
-								posAdjustments = posAdjustments + quantity;
-								break;
-							case 3267:	// Neg. Adjust.
-								negAdjustments = negAdjustments + quantity;
-								break;
-							default:
-								break;
-							}
-						}
-					}
-				}
-				StockReport stockReport = balanceMap.get(itemId);
-		        if (stockReport == null) {
-		        	currentBalance = 0;
-		        } else {
-		        	currentBalance = stockReport.getOnHand();
-		        }
-		        StockReport stockReportBbf = balanceBFMap.get(itemId);
-		        Integer beginningBalance = 0;
-		        if (stockReportBbf == null) {
-		        	beginningBalance = 0;
-		        } else {
-		        	beginningBalance = stockReportBbf.getOnHand();
-		        }
-				Integer stockOnHand = beginningBalance + stockReceived;
-				// keep the report easy-to-read - not a bunch of zeros.
-				if (stockLoss == 0) {
-					stockLoss = null;
-				}
-				if (stockReceived == 0) {
-					stockReceived = null;
-				}
-				if (beginningBalance == 0) {
-					beginningBalance = null;
-				}
-
-				if (currentBalance == 0) {
-					if (beginningBalance != null) {
-						currentBalance = 0;
-					} else {
-						currentBalance = null;
-					}
-				}
-				if (stockOnHand == 0) {
-					stockOnHand = null;
-				}
-				if (negAdjustments == 0) {
-					negAdjustments = null;
-				}
-				if (posAdjustments == 0) {
-					posAdjustments = null;
-				}
-				
-				StockReport itemStockReport = new StockReport();
-				itemStockReport.setId(itemId);
-				itemStockReport.setName(item.getName());
-				itemStockReport.setUnits(item.getUnit());
-				itemStockReport.setItem_group_id(item.getItem_group_id());
-				itemStockReport.setBalanceBF(beginningBalance);
-				itemStockReport.setBalanceCF(currentBalance);
-				itemStockReport.setLosses(stockLoss);
-				itemStockReport.setReceived(stockReceived);
-				itemStockReport.setNegAdjustments(negAdjustments);
-				itemStockReport.setPosAdjustments(posAdjustments);
-				itemStockReport.setOnHand(stockOnHand);
-				
-				stockReportMap.put("item" + code, itemStockReport);
-				//log.debug("item" + code + ": " + itemStockReport.getReceived());
+			throws ClassNotFoundException,
+			IOException,
+			ServletException,
+			SQLException,
+			ObjectNotFoundException  
+			
+			{
+		String sql;
+		LinkedHashMap<String,StockReport> stockReportMap = new LinkedHashMap<String,StockReport>();
+		System.out.println("Obtained all the stockReportMap");
+		Set<Entry<Long,Item>> itemSet =  itemMap.entrySet();
+		for (Entry<Long, Item> entry : itemSet) {
+		//for (DropdownItem dropdownItem : list) {
+			//Long itemId = Long.valueOf(dropdownItem.getDropdownId());
+			//Map.Entry entry = (Map.Entry) iterator.next();
+			Long itemId = entry.getKey();
+			Item item = entry.getValue();
+			String code = item.getCode().trim().replace(" ", "_");
+			//Long itemId = item.getId();
+			System.out.println("Item Id "+itemId+" is for Item "+item.getName());
+			balanceBF=getbalanceBroughtFore(conn,itemId,beginDate);
+			received = getReceivedDrugs(conn,itemId,beginDate,endDate);
+			dispensed =getDispesed(conn, itemId,beginDate,endDate);
+			loss = getLost(conn, itemId,beginDate,endDate);;
+			posAd = getPosAdjust(conn, itemId,beginDate,endDate);;
+			negAd = getNegAdjust(conn, itemId,beginDate,endDate);;
+			balanceCF=getCurrentBalance();
+			setExpired(conn,itemId);
+			
+			// keep the report easy-to-read - not a bunch of zeros.
+			if (loss == 0) {
+				loss = null;
 			}
-		} catch (SQLException e) {
-			log.error(e);
-			e.printStackTrace();
+			if (received == 0) {
+				received = null;
+			}
+			if (balanceBF == 0) {
+				balanceBF = null;
+			}
+
+			if (balanceCF == 0) {
+				if (balanceCF != null) {
+					balanceCF = 0;
+				} else {
+					balanceCF = null;
+				}
+			}
+			if (negAd == 0) {
+				negAd = null;
+			}
+			if (posAd == 0) {
+				posAd = null;
+			}
+			if (dispensed == 0) {
+				dispensed = null;
+			}
+			if (balanceCF == 0) {
+				balanceCF = null;
+			}if (outDays == 0) {
+				outDays =  null;
+			}
+			if (quantity_for_resupply == 0) {
+				quantity_for_resupply =  null;
+			}
+			
+			StockReport itemStockReport = new StockReport();
+			itemStockReport.setId(itemId);
+			itemStockReport.setName(item.getName());
+			itemStockReport.setUnits(item.getUnit());
+			itemStockReport.setItem_group_id(item.getItem_group_id());
+			itemStockReport.setBalanceBF(balanceBF);
+			itemStockReport.setLosses(loss);
+			itemStockReport.setReceived(received);
+			itemStockReport.setTotalDispensed(dispensed);
+			itemStockReport.setNegAdjustments(negAd);
+			itemStockReport.setPosAdjustments(posAd);
+			itemStockReport.setDaysOutOfStock(outDays);
+			itemStockReport.setQuantity6MonthsExpired(quantity_expired);
+			itemStockReport.setExpiryDate(expiry_date);
+			itemStockReport.setBalanceCF(balanceCF);
+			itemStockReport.setQuantityRequiredResupply(quantity_for_resupply);
+			
+			
+			stockReportMap.put("item" + code, itemStockReport);
+			//log.debug("item" + code + ": " + itemStockReport.getReceived());
 		}
 		return stockReportMap;
 	}
@@ -233,50 +221,229 @@ public class InventoryUtils {
 	 * @return
 	 * @throws ServletException
 	 */
+	//REPORT ADJUSTMENTS BY SERVTECH SYSTEMS................................................................................
+	public static int getbalanceBroughtFore(Connection conn,Long itemId,Date startDate){
+		int last_day=0;
+		outDays=0;
+		balanceCF=0;
+	   	try {
+	   		
+	   		String sql = " select max(date_of_record) as date from " +
+	   				" app.stock_control where date_of_record< '"+startDate+"'" +
+	   			    " and item_id= "+itemId;
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			rs.next();
+			if(rs.getDate("date")!=null){
+				last_day=rs.getDate("date").getDay();
+			ps = conn.prepareStatement("select balance from stock_control " +
+					" where date_of_record='"+rs.getDate("date")+"'" +
+					" and item_id= "+itemId);
+			    rs = ps.executeQuery();
+			
+			while(rs.next())
+				balanceBF = rs.getInt("balance");
+			if(balanceBF==0){
+				outDays=30-last_day;
+			}
+			}else {balanceBF =0;
+			outDays=0;}
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+		return balanceBF;
+	}
+    public static int getReceivedDrugs(Connection conn,Long itemId,Date startDate,Date endDate){
+    	
+	   	try {
+	   		
+	   		String sql = " select sum(change_value) as balance from app.stock_control " +
+	   				     " where  type_of_change=3263 " +
+	   				     " and item_id="+itemId+" " +
+	   				     " and date_of_record>='"+startDate+"' " +
+	   				     " and date_of_record<='"+endDate+"' ";
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next())
+				received = rs.getInt("balance");
+			
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+		return received;
+   }
+
+    public static int getDispesed(Connection conn,Long itemId,Date startDate,Date endDate){
+    	int  dispensed=0;
+	   	try {
+	   		
+	   		String sql = " select sum(dispensed) as balance from app.patient_item,app.encounter where " +
+	   				     " item_id="+itemId+" "+
+	   				     " and encounter.date_visit >='"+startDate+"' and encounter.date_visit <='"+endDate+"' " +
+	   				     " and encounter.id=patient_item.encounter_id ";
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next())
+				dispensed = rs.getInt("balance");
+			System.out.println("Dispensed "+dispensed);
+			
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+		return dispensed;
+	}
+ public static int getLost(Connection conn,Long itemId,Date startDate,Date endDate){
+	
+	   	try {
+	   		
+	   		String sql = " select sum(change_value) as balance from app.stock_control where " +
+	   				     " type_of_change=3265 " +
+	   				     " and item_id="+itemId+" "+
+	   				     " and date_of_record>='"+startDate+"' and date_of_record<='"+endDate+"' ";
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next())
+				loss = rs.getInt("balance");
+			
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+		return loss;
+	}
+ public static int setExpired(Connection conn,Long itemId){
+		
+	   	try {
+	   		
+	   		String sql = "select expiry_date, sum(change_value) as size_received from app.stock_control "+ 
+	   		" where (("+ 
+	   				"( MONTH(expiry_date)-MONTH(CURRENT_DATE))<=6 AND "+
+	   				 "YEAR(expiry_date)=YEAR(CURRENT_DATE)  AND CURRENT_DATE < expiry_date ) "+
+	   				" OR( "+  
+	   				"((12-MONTH(CURRENT_DATE)) + MONTH(expiry_date))<=6   AND "+
+	   				 "YEAR(CURRENT_DATE)>YEAR (expiry_date)  AND CURRENT_DATE < expiry_date "+ 
+	   				  "))  AND TYPE_OF_CHANGE=3263 and item_id="+itemId+" GROUP BY item_id,expiry_date";
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			if(rs.next()){
+				expiry_date  = rs.getDate("expiry_date");
+				quantity_expired  = rs.getInt("size_received");
+			}else {
+				expiry_date  = null;
+				quantity_expired  = null;
+				
+			}
+			
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+		return loss;
+	}
+ public static String getCurrentDate(){
+     String date ="";
+         
+         int mon= new java.util.Date().getMonth()+1;
+         int day=new java.util.Date().getDate();
+         int year=new java.util.Date().getYear()+1900;
+         if(day>9&&mon>9)
+         return year+"-"+mon+"-"+day;
+         else if(mon>9&&day<10)
+         return year+"-"+mon+"-0"+day;
+         else if(mon<10&&day>9)
+         return year+"-0"+mon+"-"+day;
+         else //(mon<9&&day<9)
+         return year+"-0"+mon+"-0"+day;
+      }
+ public static int getPosAdjust(Connection conn,Long itemId,Date startDate,Date endDate){
+	 
+	   	try {
+	   		
+	   		String sql = " select sum(change_value) as balance from app.stock_control where " +
+	   				     " type_of_change=3266 " +
+	   				     " and item_id="+itemId+" "+
+	   				     " and date_of_record>='"+startDate+"' and date_of_record<='"+endDate+"' ";
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next())
+				posAd = rs.getInt("balance");
+			
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+	   	balanceCF=+posAd;
+		return posAd;
+	}
+ public static int getNegAdjust(Connection conn,Long itemId,Date startDate,Date endDate){
+	 negAd=0;
+	   	try {
+	   		
+	   		String sql = " select sum(change_value) as balance from app.stock_control where " +
+	   				     " type_of_change=3267 " +
+	   				     " and item_id="+itemId+" "+
+	   				     " and date_of_record>='"+startDate+"' and date_of_record<='"+endDate+"' ";
+			ResultSet rs = null;
+			PreparedStatement ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while(rs.next())
+				negAd = rs.getInt("balance");
+			
+	   	} catch (Exception e) {
+	   		log.error(e);
+	   	}
+	   	
+		return negAd;
+	}
+ public static int getCurrentBalance(){
+	 int stock_in=balanceBF+received+posAd;
+	 int stock_out= dispensed+negAd+loss;
+	 balanceCF=stock_in-stock_out;
+	 quantity_for_resupply=(dispensed*2)-balanceCF;
+		System.out.println("Openning stock "+balanceBF+"Stock in "+stock_in+" Stock out "+stock_out+" Resupply Value "+quantity_for_resupply);
+		return balanceCF;
+		
+	}
+ 
+	//END SERVTECH
 	public static ResultSet getPatientDispensaryEncounters(Connection conn, int siteID, Date beginDate, Date endDate) throws ServletException {
 	
 		ResultSet rs = null;
 	
-		String dateRange = "AND date_visit >= ? AND date_visit <= ? ";
+		String dateRange = "AND date_visit >= '"+beginDate+"' AND date_visit <= '"+endDate+"' ";
 		if (endDate == null) {
-			dateRange = "AND date_visit = ?";
+			dateRange = "AND date_visit >= '"+beginDate+"' AND date_visit <= '"+beginDate+"' ";
 		}
 	
 		try {
 			if (siteID == 0) {
-				String sql = "SELECT encounter.id AS id, date_visit, patient_id, district_patient_id, " +
-				"first_name, surname, encounter.site_id, age_at_first_visit, age_category, sex, " +
-				"encounter.created_by AS created_by, encounter.created " +
-				"FROM encounter, patient " +
-				"WHERE encounter.patient_id = patient.id " +
-				"AND form_id = 132\n" +
+				String sql = "SELECT encounter.id AS id," +
+						" date_visit, patient_id, district_patient_id, " +
+				" first_name, surname, encounter.site_id, age_at_first_visit, age_category, sex, " +
+				" encounter.created_by AS created_by, encounter.created " +
+				" FROM app.encounter, app.patient " +
+				" WHERE encounter.patient_id = patient.id " +
+				" AND form_id = 132" +
 				dateRange +
-				"ORDER BY created, surname";
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ps.setDate(1, beginDate);
-				if (endDate != null) {
-					ps.setDate(2, endDate);
-				}
+				" ORDER BY created, surname";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			
 				rs = ps.executeQuery();
 			} else {
-				String sql = "SELECT encounter.id AS id, date_visit, patient_id, district_patient_id, " +
-				"first_name, surname, encounter.site_id, age_at_first_visit, age_category, sex, " +
-				"encounter.created_by AS created_by, encounter.created " +
-				"FROM encounter, patient " +
-				"WHERE encounter.patient_id = patient.id " +
-				"AND form_id = 132\n" +
+				String sql = " SELECT encounter.id AS id, date_visit, patient_id, district_patient_id, " +
+				" first_name, surname, encounter.site_id, age_at_first_visit, age_category, sex, " +
+				" encounter.created_by AS created_by, encounter.created " +
+				" FROM app.encounter, app.patient " +
+				" WHERE encounter.patient_id = patient.id " +
+				" AND form_id = 132 " +
 				dateRange +
-				"AND encounter.site_id = ? " +
-				"ORDER BY created, surname";
+				" AND encounter.site_id =  " +siteID+" "+
+				" ORDER BY created, surname";
 				PreparedStatement ps = conn.prepareStatement(sql);
-				ps.setDate(1, beginDate);
-				if (endDate != null) {
-					ps.setDate(2, endDate);
-					ps.setInt(3, siteID);
-				} else {
-					ps.setInt(2, siteID);
-				}
-				rs = ps.executeQuery();
+			    rs = ps.executeQuery();
 			}
 		} catch (Exception ex) {
 			DailyActivityReport.log.error(ex);
@@ -395,4 +562,53 @@ public class InventoryUtils {
 		}
 		return itemMap;
 	}
-}
+
+	public static ResultSet connectbug(String sql)
+	  {
+		Connection con = null;
+	    java.sql.Statement st = null;
+	    ResultSet rs = null;
+	    
+
+	    String url = "jdbc:postgresql://localhost/zeprs";
+	    String user = "postgres";
+	    String password = "lakeatts123";
+
+	    try {
+	        con = DriverManager.getConnection(url, user, password);
+	        st = con.createStatement();
+	        rs = st.executeQuery(sql);
+
+
+
+	    } catch (SQLException ex) {
+	       // Logger lgr = Logger.getLogger(Version.class.getName());
+	       System.out.println ( ex.getMessage());
+
+	    } 
+	        
+	    
+	    return rs;
+	     }
+	public void close(Connection con,
+	java.sql.Statement st ,
+	ResultSet rs ){
+		
+		try {
+	        if (rs != null) {
+	            rs.close();
+	        }
+	        if (st != null) {
+	            st.close();
+	        }
+	        if (con != null) {
+	            con.close();
+	        }
+
+	    } catch (SQLException ex) {
+	        Logger lgr = Logger.getLogger(Version.class.getName());
+	        lgr.log(Level.WARNING, ex.getMessage(), ex);
+	    }
+	}
+	  }
+	   

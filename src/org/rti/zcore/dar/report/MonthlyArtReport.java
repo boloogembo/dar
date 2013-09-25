@@ -228,18 +228,16 @@ public class MonthlyArtReport extends Register {
 					Date dateVisit = rs.getDate("date_visit");
 					int sex = rs.getInt("sex");
 					Integer ageCategory = rs.getInt("age_category");
-					
-					/*Tony adding values initialized in the comments below and un commenting duplicate valuables*/
 
-					Long encounterId = rs.getLong("id");
-					//Long patientId = rs.getLong("patient_id");
+					/*Long encounterId = rs.getLong("id");
+					Long patientId = rs.getLong("patient_id");
 					String districtPatientId = rs.getString("district_patient_id");
 					String firstName = rs.getString("first_name");
 					String surname = rs.getString("surname");
-					//Date dateVisit = rs.getDate("date_visit");
+					Date dateVisit = rs.getDate("date_visit");
 					int currentSiteId = rs.getInt("site_id");
 					String createdBy = rs.getString("created_by");
-					//Timestamp created = rs.getTimestamp("created");
+					Timestamp created = rs.getTimestamp("created");*/
 					
 					ARTPatient patient = new ARTPatient();
 					
@@ -255,8 +253,6 @@ public class MonthlyArtReport extends Register {
 						break;
 					}
 
-					/*commented out from line 260 to 283*/
-					
 					/*if (this.getDynamicReport() != null && this.getDynamicReport() == true) {
 						RegimenReport regimenReport = regimenSpecMap.get(code);
 						if (regimenReport == null) {
@@ -269,9 +265,9 @@ public class MonthlyArtReport extends Register {
 						int countInt = regimenReport.getCountInt();
 						countInt ++;
 						regimenReport.setCountInt(countInt);
-					} else {
+					} else {*/
 						// increment the totals
-						if (age != null && age > 14) {
+						/*if (age != null && age > 14) {
 							int n = artRegimenReport.getTotalAdults();
 							n++;
 							artRegimenReport.setTotalAdults(n);
@@ -305,7 +301,6 @@ public class MonthlyArtReport extends Register {
 								n++;
 								artRegimenReport.setTotalMalesNew(n);
 							}
-							
 							if (patient.getChildOrAdult().equals("A")) {
 								int n = artRegimenReport.getTotalAdultsNew();
 								n++;
@@ -316,7 +311,7 @@ public class MonthlyArtReport extends Register {
 								artRegimenReport.setTotalChildrenNew(n);
 							}
 						} else {
-							patient.setRevisit(true);
+							//patient.setRevisit(true);
 							switch (sex) {
 							case 1:
 								int n = artRegimenReport.getTotalFemalesRevisit();
@@ -345,11 +340,10 @@ public class MonthlyArtReport extends Register {
 						}
 						amount++;
 						regimenReportMap.put(key, amount);
-						
 
 
 						//log.debug("new regimen: " + code);
-						/*RegimenReport regimenReport = regimenSpecMap.get(code);
+						RegimenReport regimenReport = regimenSpecMap.get(code);
 						if (regimenReport == null) {
 							regimenReport = new RegimenReport();
 							regimenReport.setCode(code);
@@ -359,11 +353,8 @@ public class MonthlyArtReport extends Register {
 						}
 						int countInt = regimenReport.getCountInt();
 						countInt ++;
-						regimenReport.setCountInt(countInt);*/
-						
-						/*un commented the bracket below and then un commented from line 363 to 378 and  */
-						
-						//} 
+						regimenReport.setCountInt(countInt);
+						//}
 
 						/*if (patient != null) {
 						// check if this is the first visit - there might be multiples ones for this encounter
@@ -400,7 +391,6 @@ public class MonthlyArtReport extends Register {
 				ArrayList<ReportDisplay> reportDisplayList = new ArrayList<ReportDisplay>();
 				String filename = org.rti.zcore.Constants.getPathToCatalinaHome() + "databases" + File.separator  +  "regimens.txt";
 			    for(String line : new TextFile(filename)) {
-			    	/*comented out system line below */
 			    	//System.out.println(line);
 			    	String[] lineArray = line.split("\\|");
 			    	if (lineArray[0].startsWith("regimen")) {
@@ -494,8 +484,8 @@ public class MonthlyArtReport extends Register {
 				"first_name, surname, sex, encounter.site_id, age_at_first_visit, age_category, " +
 				"encounter.created_by AS created_by, " +
 				"regimen.code AS code, age_at_first_visit AS age, encounter.created, " +
-				"regimen.name AS name, regimen_group_id ,regimen_group.name" +
-				"FROM art_regimen, encounter, regimen, patient, regimen_group  " +
+				"regimen.name AS name, regimen_group_id " +
+				"FROM art_regimen, encounter, regimen, patient  " +
 				"WHERE encounter.id = art_regimen.id " +
 				"AND art_regimen.regimen_1 = regimen.id " +
 				"AND encounter.patient_id = patient.id " +
@@ -512,8 +502,8 @@ public class MonthlyArtReport extends Register {
 				"first_name, surname, sex, encounter.site_id, age_at_first_visit, age_category, " +
 				"encounter.created_by AS created_by, " +
 				"regimen.code AS code, age_at_first_visit AS age, encounter.created, " +
-				"regimen.name AS name, regimen_group_id , regimen_group.name " +
-				"FROM art_regimen, encounter, regimen, patient ,regimen_group " +
+				"regimen.name AS name, regimen_group_id " +
+				"FROM art_regimen, encounter, regimen, patient  " +
 				"WHERE encounter.id = art_regimen.id " +
 				"AND art_regimen.regimen_1 = regimen.id " +
 				"AND encounter.patient_id = patient.id " +

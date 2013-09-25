@@ -287,7 +287,7 @@ public class DynasiteConfigServlet extends ActionServlet {
     	try {
 			conn = DatabaseUtils.getZEPRSConnection(Constants.DATABASE_ADMIN_USERNAME);
 			try {
-	            HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, null, null);
+	            HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, null, null,null);
 	            DynaSiteObjects.getStatusMap().put("balanceMap", balanceMap);
 	            StockControlDAO.setExpiredStockItems(conn);
 	            StockControlDAO.setLowStockTasks(conn);
