@@ -687,7 +687,6 @@ public class CDRROIReport extends Register {
 									totalDispensedMap.put(key.intValue(), n);
 									totalDispensed.setPyridoxine25mg(n);
 									break;
-							
 								default:
 									break;
 								}
@@ -743,14 +742,18 @@ public class CDRROIReport extends Register {
 				totalQuantityRequired = new OIPatient();
 
 				//HashMap<Long, List<StockControl>> stockMap = InventoryDAO.getPatientStockMap(conn, siteId, beginDate, endDate);
-				HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null);
-				HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, null, beginDate);
-
+				HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null,endDate);
+				HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, null, beginDate,endDate);
+				//https://ogembo@bitbucket.org/ogembo/zcore-dar.git
 				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(org.rti.zcore.Constants.DATE_FORMAT_SHORT);
 		    	sdf.setTimeZone(TimeZone.getDefault());
-
+//https://github.com/boloogembo/chrisekelley.github.io.git
+		    	//https://github.com/chrisekelley/dar
+		    	//https://github.com/chrisekelley/dar.git
+		    	//https://github.com/boloogembo/chrisekelley.github.io.git
+		    	//https://github.com/boloogembo/dar.git
 				Integer currentBalance = null;
-				List<DropdownItem> list = WidgetUtils.getList(conn, "item", "id", "WHERE ITEM_GROUP_ID < 9", "ORDER BY id", DropdownItem.class, null);
+				List<DropdownItem> list = WidgetUtils.getList(conn, "item", "id", " WHERE ITEM_GROUP_ID < 9 ", " ORDER BY id ", DropdownItem.class, null);
 				for (DropdownItem dropdownItem : list) {
 					Long itemId = Long.valueOf(dropdownItem.getDropdownId());
 					List<StockControl> stockChanges = (List<StockControl>) InventoryDAO.getStockChanges(conn, itemId, siteId, beginDate, endDate);
@@ -1227,7 +1230,6 @@ public class CDRROIReport extends Register {
 						quantityRequiredNewPatients.setPyridoxine25mg(stockNew);
 						totalQuantityRequired.setPyridoxine25mg(totalRequired);
 						break;
-					
 					default:
 						break;
 					}

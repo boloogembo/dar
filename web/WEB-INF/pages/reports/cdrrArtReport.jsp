@@ -57,21 +57,6 @@ Once you have completed this report, click the "Save" button to save this report
 </td>
 </tr>
 </table>
-<p>type of Service provided at the facility</p>
-<table border="1" cellspacing="2" cellpadding="3"  width="308" height="20">
-	<tr>
-		<td width="141" >ART</td>
-		<td width="143">&nbsp;</td>
-	</tr>
-	<tr>
-		<td>PMTCT</td>
-		<td>&nbsp;</td>
-	</tr>
-	<tr>
-		<td>PEP</td>
-		<td>&nbsp;</td>
-	</tr>
-</table>
 </c:when>
 <c:otherwise>
 <%-- <p>After you make an entry in the "Quantity Required for NEW patients" column, the report will be saved at:<br/> <a href="file:///${fn:replace(register.reportPath,'\\','/')}">${register.reportPath}</a></p> --%>
@@ -84,13 +69,15 @@ Once you have completed this report, click the "Save" button to save this report
 <th rowspan="2">Beginning Balance</th>
 <th rowspan="2">Quantity Received this period</th>
 <th rowspan="2">Total Quantity dispensed this period</th>
-<th rowspan="2">Losses</th> 
-<th rowspan="2"> positive Adjustments</th>
+<th rowspan="2">Losses</th>
+<th rowspan="2">Positive Adjustments</th>
 <th rowspan="2">Negative Adjustments</th>
-<th rowspan="2">End of Month Physical Count</th>
+<th rowspan="2">Ending Balance / Physical Count</th>
 <th colspan="2">Drugs with less than 6 months to expiry</th>
 <th rowspan="2">Days out of stock</th>
 <th rowspan="2" title="Quantity for Re-supply(I) = 3 * Total Dispensed(C) - Current Balance(G)" >Quantity required for Re-supply</th>
+<th rowspan="2" title="Double-click on each cell in this column to enter this data. Use the number of new patients per regimen on the Monthly Patient Summary to calculate the number of patients per regimen.">Quantity Required for NEW patients</th>
+<th rowspan="2" >Total Quantity Required
 </tr>
 <tr>
 <td>Quantity</td>
@@ -106,8 +93,10 @@ Once you have completed this report, click the "Save" button to save this report
 <th>G = A+B-C-D+E-F</th>
 <th>&nbsp;</th>
 <th>&nbsp;</th>
-<th>G</th>
 <th>H</th>
+<th>I</th>
+<th>J</th>
+<th>K</th>
 </tr>
 <%--<c:choose>
  <c:when test="${! empty dynamicReport}">
@@ -132,7 +121,14 @@ Once you have completed this report, click the "Save" button to save this report
 		<td align="center">${drug.expiryDate}</td>
 		<td align="center">${drug.daysOutOfStock}</td>
 		<td align="center">${drug.quantityRequiredResupply}</td>
-		
+		<td align="center" ondblclick="callDynamicReportWidget('quantityRequiredNewPatients.drug${drug.id}', 'CDRRArtReport')" class="reportInput">
+		<span id="value.quantityRequiredNewPatients.drug${drug.id}">${drug.quantityRequiredNewPatients}</span>
+		<span id="widget.quantityRequiredNewPatients.drug${drug.id}"></span>
+		</td>
+		<td align="center" ondblclick="callDynamicReportWidget('totalQuantityRequired.drug${drug.id}', 'CDRRArtReport')" class="reportInput">
+		<span id="value.totalQuantityRequired.drug${drug.id}">${drug.totalQuantityRequired}</span>
+		<span id="widget.totalQuantityRequired.drug${drug.id}"></span>
+		</td>
     </tr>
     </c:forEach>
 </c:when>
@@ -167,6 +163,15 @@ Once you have completed this report, click the "Save" button to save this report
 	<td align="center">${stockReport.expiryDate}</td>
 	<td align="center">${stockReport.daysOutOfStock}</td>
 	<td align="center">${stockReport.quantityRequiredResupply}</td>
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients">${stockReport.quantityRequiredNewPatients}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients"></span>
+	</td>
+
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.totalQuantityRequired', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired">${stockReport.totalQuantityRequired}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired"></span>
+	</td>
 </tr>
 </c:if>
 </c:forEach>
@@ -198,6 +203,15 @@ Once you have completed this report, click the "Save" button to save this report
 	<td align="center">${stockReport.expiryDate}</td>
 	<td align="center">${stockReport.daysOutOfStock}</td>
 	<td align="center">${stockReport.quantityRequiredResupply}</td>
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients">${stockReport.quantityRequiredNewPatients}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients"></span>
+	</td>
+
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.totalQuantityRequired', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired">${stockReport.totalQuantityRequired}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired"></span>
+	</td>
 </tr>
 </c:if>
 </c:forEach>
@@ -228,14 +242,19 @@ Once you have completed this report, click the "Save" button to save this report
 	<td align="center">${stockReport.expiryDate}</td>
 	<td align="center">${stockReport.daysOutOfStock}</td>
 	<td align="center">${stockReport.quantityRequiredResupply}</td>
-	
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients">${stockReport.quantityRequiredNewPatients}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients"></span>
+	</td>
+
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.totalQuantityRequired', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired">${stockReport.totalQuantityRequired}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired"></span>
+	</td>
 </tr>
 </c:if>
 </c:forEach>
 
-<%--Commenting out paeds2 --%>
-
-<%-- 
 <tr>
 <th colspan="15">Paediatric Preparations 2</th>
 </tr>
@@ -262,43 +281,18 @@ Once you have completed this report, click the "Save" button to save this report
 	<td align="center">${stockReport.expiryDate}</td>
 	<td align="center">${stockReport.daysOutOfStock}</td>
 	<td align="center">${stockReport.quantityRequiredResupply}</td>
-</tr>
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients">${stockReport.quantityRequiredNewPatients}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.quantityRequiredNewPatients"></span>
+	</td>
 
-</c:if>
-</c:forEach> 
---%>
-<tr>
-<th colspan="15">Drugs for OIs</th>
+	<td align="center" ondblclick="callReportWidget('stockReportMap.${stockReportMapItem.key}.totalQuantityRequired', 'CDRRArtReport')" class="reportInput">
+	<span id="value.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired">${stockReport.totalQuantityRequired}</span>
+	<span id="widget.stockReportMap.${stockReportMapItem.key}.totalQuantityRequired"></span>
+	</td>
 </tr>
-<c:forEach items="${register.stockReportMap}" var="stockReportMapItem">
-<c:set var="stockReport" value="${stockReportMapItem.value}" />
-<c:if test="${stockReport.displayCategory == 'stock_oi'}">
-<c:url value="reports/stockChanges.do" var="stock_control">
-	<c:param name="siteId" value="${siteId}"/>
-	<c:param name="beginDate" value="${register.beginDate}"/>
-	<c:param name="endDate" value="${register.endDate}"/>
-	<c:param name="itemId" value="${stockReport.id}"/>
-</c:url>
-<tr>
-	<td><a href='<c:out value="/${appName}/${stock_control}"/>'>${stockReport.name}</a></td>
-	<td>${stockReport.units}</td>
-	<td align="center">${stockReport.balanceBF}</td>
-	<td align="center">${stockReport.received}</td>
-	<td align="center">${stockReport.totalDispensed}</td>
-	<td align="center">${stockReport.losses}</td>
-	<td align="center">${stockReport.posAdjustments}</td>
-	<td align="center">${stockReport.negAdjustments}</td>
-	<td align="center">${stockReport.balanceCF}</td>
-	<td align="center">${stockReport.quantity6MonthsExpired}</td>
-	<td align="center">${stockReport.expiryDate}</td>
-	<td align="center">${stockReport.daysOutOfStock}</td>
-	<td align="center">${stockReport.quantityRequiredResupply}</td>
-</tr>
-
 </c:if>
 </c:forEach>
-
-
 
 <%--
 </c:otherwise>
@@ -341,10 +335,27 @@ Once you have completed this report, click the "Save" button to save this report
 </table>
 <p>&nbsp;</p>
 <table border="1" cellpadding="3" width="75%">
-
+<tr>
+<th colspan="11" align="left">Comments (including explanation of losses and adjustments): </th>
+</tr>
+<tr>
+	<td colspan="10" rowspan="3" style="border: 1px solid gray;">&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
 
 <tr>
-	<td>Report prepared by: </td>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+</tr>
+<tr>
+	<td colspan="10">&nbsp;</td>
+	<td>&nbsp;</td>
+</tr>
+
+<tr>
+	<td>Report submitted by: </td>
 	<td>&nbsp;</td>
 	<td style="border: 1px solid gray;">&nbsp;</td>
 	<td>&nbsp;</td>
@@ -376,7 +387,7 @@ Once you have completed this report, click the "Save" button to save this report
 </tr>
 
 <tr>
-	<td>Report approved by: </td>
+	<td>Report received by: </td>
 	<td>&nbsp;</td>
 	<td style="border: 1px solid gray;">&nbsp;</td>
 	<td>&nbsp;</td>

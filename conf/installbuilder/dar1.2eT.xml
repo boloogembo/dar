@@ -1,8 +1,8 @@
 <project>
     <shortName>dar</shortName>
     <fullName>zCore DAR</fullName>
-    <version>1.2ft</version>
-    <readmeFile>../../../../../Program Files/dar-1.2f/readme.txt</readmeFile>
+    <version>1.2eT</version>
+    <readmeFile>../../../../../Program Files/dar-1.2e/readme.txt</readmeFile>
     <componentList>
         <component>
             <name>default</name>
@@ -62,58 +62,58 @@
                     <platforms>windows</platforms>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/app</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/app</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/backup</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/backup</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/bin</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/conf</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/conf</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/databases</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/databases</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/derby-bin</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/derby-bin</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/lib</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/lib</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/logs</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/logs</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/resources</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/resources</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/scripts</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/scripts</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/temp</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/temp</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/updates</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/updates</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/webapps</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/webapps</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/work</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/work</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>../../../../../Program Files/dar-1.2f/homepage.properties</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/homepage.properties</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../../../../Program Files/dar-1.2f/readme.txt</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/readme.txt</origin>
                         </distributionFile>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/docs</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/docs</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../../../../Program Files/dar-1.2f/testing</origin>
+                            <origin>../../../../../Program Files/dar-1.2e/testing</origin>
                         </distributionDirectory>
                     </distributionFileList>
                 </folder>

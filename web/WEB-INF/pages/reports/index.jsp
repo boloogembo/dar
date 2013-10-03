@@ -92,10 +92,14 @@
 				<html:option value="20">Combined Monthly Reports for CDRR/ARV's</html:option>
 <%-- 				<html:option value="10">ART & PMTCT LMIS Data Aggregation Tool (for Central Sites)</html:option> --%>
 				<!-- <html:option value="14">Monthly Reports for ARV and OI - Dynamic</html:option> -->
-				<!--<html:option value="1">OI - Daily Activity Report</html:option>-->
-				<!--<html:option value="2">ART - Adults - Daily Activity Report</html:option>-->
-				<html:option value="2"> Combined Daily Activity Report</html:option>
-				
+				<html:option value="1">OI - Daily Activity Report</html:option>
+				<html:option value="2">ART - Adults - Daily Activity Report</html:option>
+				<html:option value="3">ART - Paeds - Daily Activity Report</html:option>
+				<!-- <html:option value="4">OI - ART - Adults - DAR Combined Report</html:option> -->
+				<html:option value="5">CDRR-ART Report</html:option>
+				<!-- <html:option value="15">CDRR-ART Report - Dynamic</html:option> -->
+				<html:option value="7">CDRR-OI Report</html:option>
+				<!-- <html:option value="17">CDRR-OI Report - Dynamic</html:option> -->
 				<html:option value="6">Monthly ART Summary Report</html:option>
 				<!-- <html:option value="16">Monthly ART Summary Report - Dynamic</html:option> -->
 				<html:option value="8">Appointment Register</html:option>
@@ -158,11 +162,8 @@
 
     <ul>
         <li><html:link action="ChooseReportAction?bdate=${dateNow}&siteId=${theSite}&report=2">ART Adult Daily Activity Report: today</html:link></li>
-        <li><html:link action="ChooseReportAction?bdate=${dateNow}&edate=${date1weekaheadSql}&siteId=${theSite}&report=8">Appointment Register:</html:link> 
-        Upcoming Appointments (1 week)</li>
-        <li><html:link action="ChooseReportAction?siteId=${zeprs_session.clientSettings.siteId}&report=9">Defaulters Register:</html:link>
-          Defaulters in the last two months and missed appointments in the last one month. 
-        </li>
+        <li><html:link action="ChooseReportAction?bdate=${dateNow}&edate=${date1weekaheadSql}&siteId=${theSite}&report=8">Appointment Register:</html:link> Upcoming Appointments (1 week)</li>
+        <li><html:link action="ChooseReportAction?siteId=${zeprs_session.clientSettings.siteId}&report=9">Defaulters Register:</html:link> Patients who have missed appointments over the past week</li>
     </ul>
 
 <logic:present role="ALTER_PROGRAMS_AND_SCREEN_APPEARANCE">

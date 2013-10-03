@@ -1268,7 +1268,7 @@ public class ZEPRSUtils {
 
     	return rs;
     }
-    protected static ResultSet getMissedVisits(Date beginDate, Date endDate, int siteID, Connection conn) throws ServletException {
+    /*protected static ResultSet getMissedVisits(Date beginDate, Date endDate, int siteID, Connection conn) throws ServletException {
 
     	//Connection conn = null;
     	ResultSet rs = null;
@@ -1307,7 +1307,7 @@ public class ZEPRSUtils {
     	}
 
     	return rs;
-    }
+    }*/
 
     /**
      * Get MCH mothers - not in labour, having submitted a routine ante visit

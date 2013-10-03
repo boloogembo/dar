@@ -45,8 +45,6 @@ public class StockControlDAO {
      * Commons Logging instance.
      */
     private static Log log = LogFactory.getFactory().getInstance(StockControlDAO.class);
-    
-  
 
     /**
      * Loops thorough all items and checks if the expiry date is in the next 3 months.
@@ -67,8 +65,6 @@ public class StockControlDAO {
     	} else {
     		expiredStockItems = new ArrayList<StockControl>();
     	}*/
-    	
-    	  log.debug(" we are setting expired stock items ");
 
     	if (DynaSiteObjects.getStatusMap().get("balanceMap") != null) {
     		HashMap<Long,StockReport> balanceMap = (HashMap<Long, StockReport>) DynaSiteObjects.getStatusMap().get("balanceMap");
@@ -83,7 +79,7 @@ public class StockControlDAO {
         				//expiredStockItems.add(stock);
         				stockReport.setExpired(Boolean.TRUE);
         				stockReport.setExpiryDate(stock.getExpiry_date());
-        				//stockReport.setName(stock.getNotes());
+        				stockReport.setName(stock.getNotes());
         			}
     			}
     		}
@@ -236,8 +232,6 @@ public class StockControlDAO {
 
 		Collections.sort(stockAlertList, new DateVisitOrderComparator());
 		DynaSiteObjects.getStatusMap().put("stockAlertList",stockAlertList);
-		
-		log.debug(" we are setting  stock alert list ");
 	}
 
 
@@ -291,7 +285,7 @@ public class StockControlDAO {
 						stock = new StockControl();
 						stock.setExpiry_date(expiryDate);
 					}
-					//stock.setNotes(itemName);
+					stock.setNotes(itemName);
 					stock.setItem_id(itemId);
 				} catch (ObjectNotFoundException e) {
 					//itemName = "Deleted Item " + itemId;
@@ -301,7 +295,6 @@ public class StockControlDAO {
 				//stockReport.setExpired(Boolean.TRUE);
 			}
 		}
-		
 		return stock;
 
 	}
@@ -369,7 +362,6 @@ public class StockControlDAO {
     			}
     		}
     		DynaSiteObjects.getStatusMap().put("lowStockItems", lowStockItems);
-    		log.debug(" we are setting low stock items ");
     	}
     }
 
@@ -397,7 +389,7 @@ public class StockControlDAO {
 		if (stock!= null && stock.getNotes() != null) {
 			stockReport.setExpired(Boolean.TRUE);
 			stockReport.setExpiryDate(stock.getExpiry_date());
-			//stockReport.setName(stock.getNotes());
+			stockReport.setName(stock.getNotes());
 		}
 		balanceMap.put(itemId, stockReport);
 		// refreshes the StockAlertList.

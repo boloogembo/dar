@@ -12,14 +12,12 @@
 <fmt:formatDate value="${register.endDate}" pattern="${dateFormatLong}" var="endDate"/>
 
 <template:insert template='/WEB-INF/templates/${appTemplateDir}/template-config-print.jsp'>
-<template:put name='title' content='${detailName} Site statistics for period: ${beginDate} - ${endDate}' direct='true'/>
-<template:put name='header' content='${detailName} Site statistics for period: ${beginDate} - ${endDate}' direct='true'/>
+<template:put name='title' direct='true'>Defaulters Register for ${register.siteName} ${beginDate} - ${endDate}</template:put>
+<template:put name='header' direct='true'>Defaulters Register for ${register.siteName} ${beginDate} - ${endDate}</template:put>
 <template:put name='content' direct='true'>
-<h2>Site statistics for period: ${beginDate} - ${endDate}</h2>
 <div id="forms">
-
 <h1>Defaulters Register for ${register.siteName} ${beginDate} - ${endDate}</h1>
-<p>Patients who had appointments during the past one month and missed their appointments.</p>
+<p>Patients who had appointments during the past week and missed their appointments.</p>
 <table border="1" cellspacing="0" cellpadding="3" class="enhancedtable">
 <tr>
     <th>

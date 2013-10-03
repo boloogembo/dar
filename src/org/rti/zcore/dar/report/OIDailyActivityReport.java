@@ -267,8 +267,8 @@ public class OIDailyActivityReport extends Register {
                         losses = new OIPatient();
                         Integer currentBalance = null;
             			//HashMap<Long, List<StockControl>> stockMap = InventoryDAO.getPatientStockMap(conn, siteId, beginDate, endDate);
-            			HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null);
-        				HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, siteId, beginDate);
+            			HashMap<Long,StockReport> balanceMap = InventoryDAO.getBalanceMap(conn, siteId, null,endDate);
+        				HashMap<Long,StockReport> balanceBFMap = InventoryDAO.getBalanceMap(conn, siteId, beginDate,endDate);
                         //EncounterData encounter = (EncounterData) PatientItemDAO.getEncounterRawValues(conn, encounterForm, "132", encounterId, clazz);
                     	List<DropdownItem> list = WidgetUtils.getList(conn, "item", "id", "WHERE (ITEM_GROUP_ID > 3 AND  ITEM_GROUP_ID < 9)", "ORDER BY id", DropdownItem.class, null);
                     	for (DropdownItem dropdownItem : list) {

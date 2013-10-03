@@ -271,7 +271,7 @@ public class StockUsageReport extends Register {
 									} else {
 										row.createCell(2).setCellValue(new HSSFRichTextString(""));
 									}
-									//row.createCell(3).setCellValue(new HSSFRichTextString(stockControl.getNotes()));
+									row.createCell(3).setCellValue(new HSSFRichTextString(stockControl.getNotes()));
 									if (posAdjust != null) {
 										row.createCell(4).setCellValue(posAdjust);
 									}

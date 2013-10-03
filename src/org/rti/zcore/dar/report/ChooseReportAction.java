@@ -167,7 +167,7 @@ public class ChooseReportAction extends BaseAction {
          String date1monthpastStr = sdf.format(date1monthpast);
          java.sql.Date date1monthpastSql =  java.sql.Date.valueOf(date1monthpastStr);
 
-         // week behind - for defaulter report
+         // week behind - for defaulters report
          java.util.Calendar c2 = java.util.Calendar.getInstance();
          c2.add(java.util.Calendar.WEEK_OF_YEAR, -4);
          java.util.Date date1weekpast = c2.getTime();
@@ -177,7 +177,7 @@ public class ChooseReportAction extends BaseAction {
 
          // week ahead
          java.util.Calendar c4 = java.util.Calendar.getInstance();
-         c4.add(java.util.Calendar.WEEK_OF_YEAR, +4);
+         c4.add(java.util.Calendar.WEEK_OF_YEAR, +1);
          java.util.Date date1weekahead = c4.getTime();
          java.text.SimpleDateFormat sdf2 = new java.text.SimpleDateFormat(DATE_FORMAT);
          sdf2.setTimeZone(TimeZone.getDefault());
@@ -216,10 +216,12 @@ public class ChooseReportAction extends BaseAction {
         String username = user.getName();
         ReportCreator reportCreator = new ReportCreator();
         reportCreator.setUsernameR(username);
-
+        System.out.println("Report Id "+reportID);
         switch (reportID) {
              /**/
+        
             case 1:
+            	System.out.println("OIDailyActivityReport");
             	register = new DailyActivityReport();
             	register.setType("OIDailyActivityReport");
                 register.setSiteName(siteName);
@@ -232,10 +234,12 @@ public class ChooseReportAction extends BaseAction {
                 clazz = DailyActivityReport.class;
                 break;
             case 2:
+            	System.out.println("ARTAdultDailyActivityReport");
             	register = new DailyActivityReport();
             	register.setType("ARTAdultDailyActivityReport");
             	register.setSiteName(siteName);
             	register.getPatientRegister(beginDate, endDate, siteId);
+                System.out.println("BAck from Database");
             	register.setBeginDate(beginDate);
             	register.setEndDate(endDate);
             	request.setAttribute("register", register);
@@ -244,6 +248,7 @@ public class ChooseReportAction extends BaseAction {
             	clazz = DailyActivityReport.class;
             	break;
             case 3:
+            	System.out.println("OIDailyActivityReport");
             	register = new DailyActivityReport();
             	register.setType("ARTChildDailyActivityReport");
             	register.setSiteName(siteName);
@@ -268,12 +273,14 @@ public class ChooseReportAction extends BaseAction {
             	clazz = OIARTAdultDailyActivityReport.class;
             	break;*/
             case 5:
+            	System.out.println("CDRRArtReport");
             	//register = new CDRRArtReport();
             	register = new DailyActivityReport();
             	/*if (dynamicReport == true) {
             		request.setAttribute("dynamicReport", "1");
             		register.setDynamicReport(true);
             	}*/
+            	
             	register.setType("CDRRArtReport");
             	register.setSiteName(siteName);
                 register.setReportCreator(reportCreator);
@@ -311,6 +318,7 @@ public class ChooseReportAction extends BaseAction {
             	SessionUtil.getInstance(session).getReports().put(name, register);
             	break;
             case 6:
+            	System.out.println("print");
             	register = new MonthlyArtReport();
             	/*if (dynamicReport == true) {
             		request.setAttribute("dynamicReport", "1");
@@ -328,14 +336,19 @@ public class ChooseReportAction extends BaseAction {
         		site = clientSettings.getSite();
         		siteAbbrev = site.getAbbreviation();
         		i=1;
-    			reportFileName = "MonthlyArtReport" + "-" + siteAbbrev + "-" + username + "-" + DateUtils.getNowPretty() + "-" + i;
-    			path = Constants.ARCHIVE_PATH + site.getAbbreviation() + Constants.pathSep + "reports" + Constants.pathSep + reportFileName+".xls";
+    			reportFileName = "MonthlyArtReport" + "-" + siteAbbrev + "-"
+        		+ username + "-" + DateUtils.getNowPretty() + "-" + i;
+    			path = Constants.ARCHIVE_PATH + site.getAbbreviation()
+    					+ Constants.pathSep + "reports" + Constants.pathSep + reportFileName+".xls";
     			// check if file exists
     			f = new File(path);
     			while(f.exists()) {
     				i++;
-    				reportFileName = "MonthlyArtReport" + "-" + siteAbbrev + "-" + username + "-" + DateUtils.getNowPretty() + "-" + i;
-    				path = Constants.ARCHIVE_PATH + site.getAbbreviation() + Constants.pathSep + "reports" + Constants.pathSep + reportFileName+".xls";
+    				reportFileName = "MonthlyArtReport" + "-" + siteAbbrev + "-" + username +
+    						"-" + DateUtils.getNowPretty() + "-" + i;
+    				path = Constants.ARCHIVE_PATH + site.getAbbreviation() +
+    						Constants.pathSep + "reports" + Constants.pathSep +
+    						reportFileName+".xls";
     				f = new File(path);
     			}
     			register.setReportFileName(reportFileName);
@@ -348,6 +361,8 @@ public class ChooseReportAction extends BaseAction {
             	break;
             case 7:
             	//register = new CDRROIReport();
+
+            	System.out.println("CDRROIReport");
             	register = new DailyActivityReport();
             	register.setType("CDRROIReport");
             	/*if (dynamicReport == true) {
@@ -384,6 +399,8 @@ public class ChooseReportAction extends BaseAction {
             	SessionUtil.getInstance(session).getReports().put(name, register);
             	break;
             case 8:
+
+            	System.out.println("8 AppointmentRegister");
             	register = new AppointmentRegister();
             	register.setType("print");   // not (longer) view version
             	register.setSiteName(siteName);
@@ -405,6 +422,7 @@ public class ChooseReportAction extends BaseAction {
             	clazz = AppointmentRegister.class;
             	break;
             case 9:
+            	System.out.println("9+ DefaultersRegister");
             	register = new DefaultersRegister();
             	register.setType("print");   // not (longer) view version
             	register.setSiteName(siteName);
@@ -426,6 +444,8 @@ public class ChooseReportAction extends BaseAction {
             	clazz = DefaultersRegister.class;
             	break;
             case 11:
+
+            	System.out.println("9+SiteStatisticsReport");
             	register = new SiteStatisticsReport();
             	register.setType("print");   // not (longer) view version
             	register.setSiteName(siteName);
@@ -447,6 +467,7 @@ public class ChooseReportAction extends BaseAction {
             	clazz = SiteStatisticsReport.class;
             	break;
             case 12:
+            	System.out.println("12+StockUsageReport");
             	register = new StockUsageReport();
             	register.setType("print");   // not (longer) view version
             	register.setSiteName(siteName);
@@ -497,6 +518,7 @@ public class ChooseReportAction extends BaseAction {
             	}
             	break;
             case 13:
+            	System.out.println("RegimenChangeReport");
             	register = new RegimenChangeReport();
             	register.setType("print");   // not (longer) view version
             	register.setSiteName(siteName);

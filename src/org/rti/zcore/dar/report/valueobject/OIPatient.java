@@ -19,7 +19,6 @@ public class OIPatient {
 
 
 	private Long patientId;
-	private Integer zidovudine_liquid_10mg_ml;
 	private Long encounterId;
     private String clientId;
     private String surname;
@@ -391,11 +390,6 @@ public class OIPatient {
 	public void setPyridoxine25mg(Integer pyridoxine25mg) {
 		this.pyridoxine25mg = pyridoxine25mg;
 	}
-
-	
-	
-	
-	
 	/**
 	 * @return the age
 	 */
@@ -456,6 +450,5 @@ public class OIPatient {
 	public void setCreated(Timestamp created) {
 		this.created = created;
 	}
-
 
 }
