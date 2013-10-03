@@ -169,7 +169,7 @@ public class ChooseReportAction extends BaseAction {
 
          // week behind - for defaulters report
          java.util.Calendar c2 = java.util.Calendar.getInstance();
-         c2.add(java.util.Calendar.WEEK_OF_YEAR, -4);
+         c2.add(java.util.Calendar.WEEK_OF_YEAR, -1);
          java.util.Date date1weekpast = c2.getTime();
          sdf.setTimeZone(TimeZone.getDefault());
          String date1weekpastStr = sdf.format(date1weekpast);
@@ -422,6 +422,7 @@ public class ChooseReportAction extends BaseAction {
             	clazz = AppointmentRegister.class;
             	break;
             case 9:
+            	System.out.println("9+ DefaultersRegister");
             	System.out.println("9+ DefaultersRegister");
             	register = new DefaultersRegister();
             	register.setType("print");   // not (longer) view version
